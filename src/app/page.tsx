@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { useTranslations } from 'next-intl';
 
-import { MapPin, Waves, Wind } from "lucide-react";
+import { MapPin, MessageCircle, Waves, Wind } from "lucide-react";
 import { Button } from "@nextui-org/button";
 import DraggableScroll from "./components/DraggableScroll";
 import RecommendedCard from "./components/RecommendedCard";
@@ -25,6 +25,10 @@ export default function Home() {
     { text: "Golden Prairie", description: "4 Friends joined" },
     { text: "Cedar Haven", description: "5 Friends joined" },
     { text: "Emerald Hills", description: "8 Friends joined" },
+    { text: "Emerald Hills", description: "8 Friends joined" },
+    { text: "Emerald Hills", description: "8 Friends joined" },
+    { text: "Emerald Hills", description: "8 Friends joined" },
+    { text: "Emerald Hills", description: "8 Friends joined" },
     { text: "Whispering Pines", description: "3 Friends joined" }
   ]
 
@@ -45,7 +49,7 @@ export default function Home() {
           </div>
         </div>
 
-        <section className="container absolute bottom-20">
+        <section className="container absolute lg:bottom-20 md:bottom-10 bottom-0 ">
           <div className="bg-white rounded-[30px] p-10 min-h-[100px] shadow-md">
             <div className="font-bold text-2xl">
 
@@ -53,7 +57,7 @@ export default function Home() {
             </div>
           </div>
 
-          <div className="absolute bottom-0 left-[42%]"><Button className="w-[300px] bg-[--primary] text-white">{t('Search Place')}</Button></div>
+          <div className="flex justify-center mt-[-25px] w-[100%]"><Button className="w-[300px] bg-[--primary] text-white">{t('Search Place')}</Button></div>
         </section>
 
       </section>
@@ -66,7 +70,7 @@ export default function Home() {
 
 
             {categories.map((item, key) => <div key={key} className="w-20">
-              <div className="aspect-square rounded-2xl bg-[--primary-50] text-[--primary] text-2xl  flex  justify-center items-center">
+              <div className="aspect-square rounded-2xl bg-[--primary-50] text-[--primary] text-2xl  flex  justify-center items-center hover:scale-105 duration-150 cursor-default">
                 {item.icon}
               </div>
               <div className="text-black text-center">{t(item.name)}</div>
@@ -82,12 +86,39 @@ export default function Home() {
         <div className="text-[34px] text-[--primary] font-bold py-5 p-10">{t('Recommended for you')}</div>
         <DraggableScroll className="p-5 px-10" items={
           [
-            places.map((item, key) => <RecommendedCard key={key} text={item.text} description={item.description} className="bg-[--primary]" />,)
+            places.map((item, key) => <RecommendedCard key={key} text={item.text} description={item.description} className="bg-[--primary] cursor-pointer select-none" />,)
 
           ]
         } />
       </section>
 
+
+      <section className="bg-blue-50">
+        <div className="text-[34px] text-[--primary] font-bold py-5 p-10 flex gap-2"><div className="icon">&#xf773;</div>{t('Island')}</div>
+        <DraggableScroll className="p-5 px-10" items={
+          [
+            places.map((item, key) => <RecommendedCard key={key} text={item.text} description={item.description} className="bg-[--primary] cursor-pointer select-none" />,)
+
+          ]
+        } />
+      </section>
+
+      <section className="bg-blue-50">
+        <div className="text-[34px] text-[--primary] font-bold py-5 p-10 flex gap-2"> <div className="icon">&#xe800;</div>{t('Beach')}</div>
+        <DraggableScroll className="p-5 px-10" items={
+          [
+            places.map((item, key) => <RecommendedCard key={key} text={item.text} description={item.description} className="bg-[--primary] cursor-pointer select-none" />,)
+
+          ]
+        } />
+      </section>
+
+
+
+      {/* floating button */}
+        <div className="fixed bottom-5 right-5">
+          <Button isIconOnly={true} radius="full" className="p-3 border-[1px]  shadow-md bg-[--primary] text-white"><MessageCircle /></Button>
+        </div>
     </>
   );
 }

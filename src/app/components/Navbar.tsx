@@ -10,10 +10,10 @@ export default function Navbar(){
     const t = useTranslations();
 
 
-    return <div className="w-full flex justify-between sticky top-0 p-5 px-10  text-white z-10 overlay">
+    return <div className="w-full flex justify-between sticky top-0 py-5 px-10  text-white z-10 bg-black/50 ">
         <div>LOGO</div>
 
-        <ul className='grid grid-cols-4 gap-12 justify-center items-center justify-items-center duration-150 '>
+        <ul className='lg:grid md:hidden hidden grid-cols-4 gap-12 justify-center items-center justify-items-center duration-150 '>
             <Link href="/" >
                 <li >{t('Home')}</li>
             </Link>
@@ -29,9 +29,9 @@ export default function Navbar(){
             </Link>
         </ul>
         <div className="w-10"></div>
-        <div className="grid grid-flow-col gap-2 absolute right-5">
+        <div className="lg:grid md:hidden hidden grid-flow-col gap-2 absolute right-5 top-3">
             <LangSwitch />
-            <Button variant="light" className='text-white'>Sign Up </Button>
+            <Link href="register"><Button variant="light" className='text-white'>Sign Up </Button></Link>
             <Link href="login"><Button className='bg-[--primary] text-white'>Sign In</Button></Link>
         </div>
     </div>
