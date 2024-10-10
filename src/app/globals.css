@@ -3,8 +3,11 @@
 @tailwind utilities;
 
 :root {
-  --background: #ffffff;
+  --background: #ffff;
   --foreground: #171717;
+
+  --primary:#0096b1;
+  --primary-50:#bad5d8;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -17,7 +20,34 @@
 body {
   color: var(--foreground);
   background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family:var(--font-Chakra-Petch),var(--font-Noto-Kufi);
+}
+
+.icon{
+  font-family: var(--icon);
+}
+
+.show_bg_2 {
+  background-image:
+  linear-gradient(to bottom, rgba(255, 255, 255, 0), rgba(0, 0, 0, 0.853)),
+  url('https://images.pexels.com/photos/2162689/pexels-photo-2162689.jpeg');
+  width: 100%;
+  /* height: 400px; */
+  background-size: cover;
+  color: white;
+  padding: 20px;
+}
+
+.overlay{
+  background:linear-gradient(to top, rgba(255, 255, 255, 0), rgba(0, 0, 0, 0.693));
+  width: 100%;
+  /* height: 400px; */
+  background-size: cover;
+
+}
+
+.container{
+  padding:10px 100px;
 }
 
 @layer utilities {

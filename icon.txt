@@ -1,0 +1,5 @@
+
+  static const IconData beach_access = IconData(0xe800, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData pets = IconData(0xe801, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData spa_1 = IconData(0xe802, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData water = IconData(0xf773, fontFamily: _kFontFam, fontPackage: _kFontPkg);
