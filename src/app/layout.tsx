@@ -6,6 +6,8 @@ import { NextIntlClientProvider } from 'next-intl';
 import { getLocale, getMessages } from 'next-intl/server';
 
 import { Inter,Chakra_Petch,Noto_Kufi_Arabic } from 'next/font/google'
+import Footer from "./components/Footer";
+import FloatingChat from "./components/FloatingChat";
 
 const fluttericon = localFont({
   src: './fonts/MyFlutterApp.ttf',
@@ -57,6 +59,8 @@ export default async function RootLayout({
 
           <Navbar />
           {children}
+          <FloatingChat />
+          <Footer />
         </NextIntlClientProvider>
       </body>
     </html>

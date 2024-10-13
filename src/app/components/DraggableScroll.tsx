@@ -11,7 +11,7 @@ export default function DraggableScroll({ items,className }: any): JSX.Element {
 
     return (
         <div
-            className={`grid grid-flow-col w-full space-x-3 overflow-x-scroll scrollbar-hide ${className}`}
+            className={`flex gap-5 w-full  overflow-x-scroll scrollbar-hide ${className}`}
             {...events}
             ref={ref} // add reference and events to the wrapping div
         >

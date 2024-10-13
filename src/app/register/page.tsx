@@ -1,5 +1,9 @@
 'use client'
 import { useState } from "react";
+import { createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { auth } from "../api/config/config";
+import { Button } from "@nextui-org/button";
+
 
 export default function Register() {
   const [email, setEmail] = useState('');
@@ -15,6 +19,37 @@ export default function Register() {
     // Handle register logic here
     console.log({ email, password });
   };
+
+  const signup = async () => {
+    alert("SIGN UP")
+  }
+
+  const signupWithGoogle = async () => {
+    try {
+      const provider = new GoogleAuthProvider();
+      const result = await signInWithPopup(auth, provider);
+      
+      // Get Google Access Token
+      const credential = GoogleAuthProvider.credentialFromResult(result);
+      const token = credential.accessToken;
+      
+      // Signed-in user info
+      const user = result.user;
+  
+      // You can add further logic for `user` or `token`
+      
+      alert("Complete");
+    } catch (error) {
+      // Handle Errors here
+      const errorCode = error.code;
+      const errorMessage = error.message;
+      const email = error.customData?.email;
+      const credential = GoogleAuthProvider.credentialFromError(error);
+      
+      alert("Uncomplete");
+    }
+  };
+  
 
   return (
     <div className="min-h-[80vh] flex flex-col justify-center py-12 sm:px-6 lg:px-8">
@@ -101,6 +136,7 @@ export default function Register() {
 
             <div>
               <button
+                onClick={e => signup()}
                 type="submit"
                 className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[--primary] hover:bg-[--primary] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[--primary]"
               >
@@ -121,14 +157,14 @@ export default function Register() {
 
             <div className="mt-6 grid gap-3">
               <div>
-                <a
-                  href="#"
+                <Button
+                  onClick={e => signupWithGoogle()}
                   className="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
                 >
                   <span className="sr-only">Sign up with Google</span>
                   <img src="https://www.svgrepo.com/show/303108/google-icon-logo.svg" alt="Google" className="h-5 w-5" />
                   <span className="px-2">Google</span>
-                </a>
+                </Button>
               </div>
             </div>
           </div>

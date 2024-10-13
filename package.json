@@ -10,8 +10,13 @@
   },
   "dependencies": {
     "@nextui-org/button": "^2.0.38",
+    "@nextui-org/popover": "^2.1.29",
     "@nextui-org/system": "^2.2.6",
+    "@nextui-org/tabs": "^2.0.37",
     "@nextui-org/theme": "^2.2.11",
+    "firebase": "^10.14.0",
+    "flowbite": "^2.5.2",
+    "flowbite-react": "^0.10.2",
     "framer-motion": "^11.11.0",
     "lucide-react": "^0.447.0",
     "next": "14.2.14",

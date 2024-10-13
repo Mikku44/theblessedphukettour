@@ -5,18 +5,19 @@ import { MapPin, MessageCircle, Waves, Wind } from "lucide-react";
 import { Button } from "@nextui-org/button";
 import DraggableScroll from "./components/DraggableScroll";
 import RecommendedCard from "./components/RecommendedCard";
+import Link from "next/link";
 
 export default function Home() {
   const t = useTranslations();
 
   const categories = [
-    { icon: <div className="icon">&#xf773;</div>, name: 'Island' },
-    { icon: <div className="icon">&#xe800;</div>, name: 'Beach' },
-    { icon: <div className="icon">&#xe801;</div>, name: 'Animals' },
-    { icon: <div className="icon">&#xe800;</div>, name: 'Activities' },
-    { icon: <div className="icon">&#xe800;</div>, name: 'Shopping' },
-    { icon: <Waves />, name: 'Restaurant' },
-    { icon: <div className="icon">&#xe802;</div>, name: 'Spa' },
+    { icon: <div className="icon">&#xf773;</div>, name: 'Island', link: "/island" },
+    { icon: <div className="icon">&#xe800;</div>, name: 'Beach', link: "/beach" },
+    { icon: <div className="icon">&#xe801;</div>, name: 'Animals', link: "/animals" },
+    { icon: <div className="icon">&#xe800;</div>, name: 'Activities', link: "/activities" },
+    { icon: <div className="icon">&#xe800;</div>, name: 'Shopping', link: "/shopping" },
+    { icon: <Waves />, name: 'Restaurant', link: "/restaurant" },
+    { icon: <div className="icon">&#xe802;</div>, name: 'Spa', link: "/spa" },
   ]
 
   const places = [
@@ -70,10 +71,12 @@ export default function Home() {
 
 
             {categories.map((item, key) => <div key={key} className="w-20">
-              <div className="aspect-square rounded-2xl bg-[--primary-50] text-[--primary] text-2xl  flex  justify-center items-center hover:scale-105 duration-150 cursor-default">
-                {item.icon}
-              </div>
-              <div className="text-black text-center">{t(item.name)}</div>
+              <Link href={`/categories${item.link}`}>
+                <div className="aspect-square rounded-2xl bg-[--primary-50] text-[--primary] text-2xl  flex  justify-center items-center hover:scale-105 duration-150 cursor-default">
+                  {item.icon}
+                </div>
+                <div className="text-black text-center">{t(item.name)}</div>
+              </Link>
             </div>
             )}
 
@@ -86,7 +89,7 @@ export default function Home() {
         <div className="text-[34px] text-[--primary] font-bold py-5 p-10">{t('Recommended for you')}</div>
         <DraggableScroll className="p-5 px-10" items={
           [
-            places.map((item, key) => <RecommendedCard key={key} text={item.text} description={item.description} className="bg-[--primary] cursor-pointer select-none" />,)
+            places.map((item, key) => <RecommendedCard key={key} text={item.text} description={item.description} className="bg-[--primary] cursor-pointer select-none min-w-[200px]" />,)
 
           ]
         } />
@@ -94,31 +97,20 @@ export default function Home() {
 
 
       <section className="bg-blue-50">
-        <div className="text-[34px] text-[--primary] font-bold py-5 p-10 flex gap-2"><div className="icon">&#xf773;</div>{t('Island')}</div>
-        <DraggableScroll className="p-5 px-10" items={
-          [
-            places.map((item, key) => <RecommendedCard key={key} text={item.text} description={item.description} className="bg-[--primary] cursor-pointer select-none" />,)
-
-          ]
-        } />
-      </section>
-
-      <section className="bg-blue-50">
-        <div className="text-[34px] text-[--primary] font-bold py-5 p-10 flex gap-2"> <div className="icon">&#xe800;</div>{t('Beach')}</div>
-        <DraggableScroll className="p-5 px-10" items={
-          [
-            places.map((item, key) => <RecommendedCard key={key} text={item.text} description={item.description} className="bg-[--primary] cursor-pointer select-none" />,)
-
-          ]
-        } />
-      </section>
-
-
-
-      {/* floating button */}
-        <div className="fixed bottom-5 right-5">
-          <Button isIconOnly={true} radius="full" className="p-3 border-[1px]  shadow-md bg-[--primary] text-white"><MessageCircle /></Button>
+        <div className="text-[34px] text-[--primary] font-bold py-5 p-10 flex gap-2"><div className="icon">&#xf773;</div>{t('We also have')}</div>
+        <div className="px-10 grid grid-cols-2 gap-5">
+          <div className="rounded-2xl bg-black w-full h-[250px] "></div>
+          <div className="rounded-2xl bg-black w-full h-[250px] "></div>
+          <div className="rounded-2xl bg-black w-full h-[250px] "></div>
+          <div className="rounded-2xl bg-black w-full h-[250px] "></div>
+          <div className="rounded-2xl bg-black w-full h-[250px] "></div>
+          <div className="rounded-2xl bg-black w-full h-[250px] "></div>
         </div>
+      </section>
+
+
+
+
     </>
   );
 }
