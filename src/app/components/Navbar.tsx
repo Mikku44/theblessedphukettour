@@ -31,8 +31,8 @@ export default function Navbar(){
         <div className="w-10"></div>
         <div className="lg:grid md:hidden hidden grid-flow-col gap-2 absolute right-5 top-3">
             <LangSwitch />
-            <Link href="register"><Button variant="light" className='text-white'>Sign Up </Button></Link>
-            <Link href="login"><Button className='bg-[--primary] text-white'>Sign In</Button></Link>
+            <Link href="/register"><Button variant="light" className='text-white'>Sign Up </Button></Link>
+            <Link href="/login"><Button className='bg-[--primary] text-white'>Sign In</Button></Link>
         </div>
     </div>
 }
