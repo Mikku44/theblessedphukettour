@@ -16,10 +16,11 @@ export default function Footer() {
                 </div>
 
                 <div>
-                    <h4 className="font-semibold mb-2">Platform</h4>
+                    <h4 className="font-semibold mb-2">About us</h4>
                     <ul>
-                        <li className="mb-1 hover:underline">Plans & Pricing</li>
-                        <li className="mb-1 hover:underline">Plans Manager</li>
+                        <li className="mb-1 hover:underline">Customer support</li>
+                        <li className="mb-1 hover:underline">Contact us</li>
+                        <li className="mb-1 hover:underline">Coordonate with us</li>
                     </ul>
                 </div>
 
@@ -42,7 +43,13 @@ export default function Footer() {
                         <Link href="#" className="" ><Image src={"/images/googleplay.svg"} alt="Google play" width={200} height={300} /></Link >
                         <Link href="#" className="" ><Image src={"/images/appstore.svg"} alt="App store" width={200} height={300} /></Link >
                     </div>
+                    <div className="py-5">
+                        <div className="text-sm font-bold">Payment Method</div>
+                        <Image src={"/images/stripe.png"} alt="stripe payment" className="ml-[-10px]" width={200} height={300} />
+                    </div>
                 </div>
+
+
             </div>
 
             <div className="bg-[--primary] text-white py-4">
