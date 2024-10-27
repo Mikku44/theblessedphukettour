@@ -5,7 +5,7 @@ import Navbar from "./components/Navbar";
 import { NextIntlClientProvider } from 'next-intl';
 import { getLocale, getMessages } from 'next-intl/server';
 
-import { Inter,Chakra_Petch,Noto_Kufi_Arabic } from 'next/font/google'
+import { Inter,Chakra_Petch,Noto_Kufi_Arabic ,Montserrat} from 'next/font/google'
 import Footer from "./components/Footer";
 import FloatingChat from "./components/FloatingChat";
 
@@ -33,6 +33,12 @@ const noto =  Noto_Kufi_Arabic({
   variable:"--font-noto"
 })
 
+const montserrat = Montserrat({
+  subsets: ['latin'] ,
+  display:"swap",
+  variable:"--font-montserrat"
+})
+
 export const metadata: Metadata = {
   title: "The Blessed Phuket Tour",
   description: "จองทัวร์ที่สะดวกและครบครันในภูเก็ต ค้นหาและจองทัวร์ที่เหมาะกับสไตล์การท่องเที่ยวของคุณ ไม่ว่าจะเป็นการเดินทางสุดหรู พักผ่อนบนชายหาด หรือผจญภัยในธรรมชาติ พร้อมข้อเสนอพิเศษและบริการที่น่าเชื่อถือ ให้คุณสัมผัสประสบการณ์การท่องเที่ยวที่น่าจดจำในภูเก็ตอย่างสมบูรณ์แบบ",
@@ -53,7 +59,7 @@ export default async function RootLayout({
   return (
     <html lang={locale}>
       <body
-        className={`${noto.className} ${inter.className} ${chakra.className} ${fluttericon.variable} antialiased`}
+        className={`${montserrat.className} ${montserrat.variable} ${noto.className} ${inter.className} ${chakra.className} ${fluttericon.variable} antialiased`}
       >
         <NextIntlClientProvider messages={messages}>
 

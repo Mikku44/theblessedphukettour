@@ -23,28 +23,27 @@ export default function Page() {
         </section>
 
 
-        <section className="bg-blue-100 py-10">
-            <div className="text-[22px] px-20 text-[--primary]">{t(`Island`)}</div>
-            <div className="text-[48px] px-20 font-bold">{t(`By tour company`)}</div>
-            <div className="p-4">
-                <DraggableScroll className="px-10" items={
-                    [
-                        <Link href="/categories/island/someid">
-                            <div className="hover:w-[500px] bg-[--primary] duration-300 shadow-lg rounded-xl w-[300px] h-[400px] p-4 relative text-white" style={{
-                                backgroundImage: "url(https://cf.bstatic.com/xdata/images/hotel/max1280x900/147105150.jpg?k=6af0ecc5e938d79dc46f69c613709802622945a37fb1453b8277418d71c0f491&o=&hp=1)",
-                                backgroundSize: "cover"
-                            }}>
-
-                                <div className="h-full flex items-end justify-end flex-col">
-
-                                    <div className="text-2xl font-bold">Racha island</div>
-                                    <div className="flex gap-2"><MapPin /> THAILAND , Phuket</div>
+        <section className="bg-zinc-100 py-10">
+            <div className="w-[90vw] mx-auto">
+                <div className="text-[22px] text-[--primary]">{t(`Island`)}</div>
+                <div className="text-[48px] font-bold">{t(`By tour company`)}</div>
+                <div className="py-5">
+                    <DraggableScroll className="" items={
+                        [
+                            <Link href="/categories/island/someid">
+                                <div className="hover:w-[500px] bg-[--primary] duration-300 shadow-lg rounded-xl w-[500px] h-[400px] p-4 relative text-white" style={{
+                                    backgroundImage: "url(https://cf.bstatic.com/xdata/images/hotel/max1280x900/147105150.jpg?k=6af0ecc5e938d79dc46f69c613709802622945a37fb1453b8277418d71c0f491&o=&hp=1)",
+                                    backgroundSize: "cover"
+                                }}>
+                                    <div className="h-full flex items-end justify-end flex-col">
+                                        <div className="text-2xl font-bold">Racha island</div>
+                                        <div className="flex gap-2"><MapPin /> THAILAND , Phuket</div>
+                                    </div>
                                 </div>
-                            </div>
-                        </Link>
-
-                    ]
-                } />
+                            </Link>
+                        ]
+                    } />
+                </div>
             </div>
         </section>
 
@@ -66,6 +65,7 @@ export default function Page() {
                         <div className="bg-white/20 rounded-xl p-4 h-[400px]">
                             <DraggableScroll items={
                                 [
+                                    <Link href="/categories/island/boat/someid">
                                     <div className="w-64  overflow-hidden">
                                         {/* Image */}
                                         <Image
@@ -85,7 +85,10 @@ export default function Page() {
                                             </p>
                                             <p className="font-semibold text-xl mt-2">฿1500 <span className="text-sm text-gray-500">/ Ticket</span></p>
                                         </div>
-                                    </div>,
+                                    </div>
+                                   
+                                    </Link>
+                                    ,
 
 
                                 ]

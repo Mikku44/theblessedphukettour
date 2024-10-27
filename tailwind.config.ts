@@ -9,7 +9,7 @@ const config: Config = {
     "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
     "./node_modules/flowbite/**/*.js",
     flowbite.content(),
-    "./node_modules/@nextui-org/theme/dist/components/(button|popover|tabs|ripple|spinner).js"
+    "./node_modules/@nextui-org/theme/dist/components/(button|input|popover|tabs|ripple|spinner).js"
   ],
   theme: {
     extend: {

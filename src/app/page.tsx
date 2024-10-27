@@ -34,7 +34,7 @@ export default function Home() {
     { text: "Whispering Pines", description: "3 Friends joined" }
   ]
 
-  const image = "/images/tripboat.png"
+  const image = "/images/trip.png"
   return (
     <>
 
@@ -100,11 +100,12 @@ export default function Home() {
 
       <section className="bg-[--primary] py-10">
         <div className="text-[34px] text-white font-bold py-5 p-10 flex gap-2"><div className="icon">&#xf773;</div>{t('We also have')}</div>
-        <div className="px-10 grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-5">
+        <div className="px-10 grid lg:grid-cols-2 md:grid-cols-2 grid-cols-1 gap-5">
         
-          {[1,2,3,4,5,6].map((item:any,index:number) =><div key={index} className="rounded-[28px] p-5 border-[1px] flex flex-col justify-end bg-white h-[350px] text-white shadow-sm duration-150 group" style={{ background: `linear-gradient(to bottom, rgba(255, 255, 255, 0), rgba(0, 0, 0, 0.853)),url(${image})` ,backgroundRepeat:"no-repeat",backgroundSize:"cover"}}>
-            <div className="font-bold text-[24px] absolute group-hover:relative duration-200">Title</div>
-            <div className="text-[12px] opacity-0 group-hover:opacity-75 duration-200 ">Lorem ipsum dolor sit amet consectetur Lorem ipsum dolor sit amet. adipisicing elit.</div>
+          {[1,2,3,4,5,6].map((item:any,index:number) =>
+          <div key={index} className="rounded-[28px] p-5 border-[1px] flex flex-col justify-end bg-white h-[350px] text-white shadow-sm duration-150 group" style={{ background: `linear-gradient(to bottom, rgba(255, 255, 255, 0), rgba(0, 0, 0, 0.853)),url(${image})` ,backgroundRepeat:"no-repeat",backgroundSize:"cover"}}>
+            <div className="font-bold text-[24px]  duration-200">Title</div>
+            <div className="text-[12px] duration-200 ">Lorem ipsum dolor sit amet consectetur Lorem ipsum dolor sit amet. adipisicing elit.</div>
           </div>)}
 
         </div>

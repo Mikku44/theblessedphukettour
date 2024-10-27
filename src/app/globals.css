@@ -6,8 +6,11 @@
   --background: #ffff;
   --foreground: #171717;
 
-  --primary: #0096b1;
+  --primary: #05c4e6;
   --primary-50: #bad5d8;
+
+
+  --secondary:#fab00b;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -18,6 +21,7 @@
 }
 
 body {
+  scroll-behavior: smooth;
   color: var(--foreground);
   background: var(--background);
   font-family: var(--font-Chakra-Petch), var(--font-Noto-Kufi);

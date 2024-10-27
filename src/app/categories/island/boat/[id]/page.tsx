@@ -1,11 +1,11 @@
 'use client'
 import { useState } from "react";
-import Carousel from "../../../components/carousel";
-import TimelineTrip from "../../../components/Timeline";
+import Carousel from "../../../../components/carousel";
+import TimelineTrip from "../../../../components/Timeline";
 import { Tab, Tabs } from "@nextui-org/tabs";
 import { ChevronDown, MapPin, Star } from "lucide-react";
 import { Button } from "flowbite-react";
-import Collapse from "../../../components/collapse";
+import Collapse from "../../../../components/collapse";
 import Link from "next/link";
 
 export default function Page({params}:{params:{id:string}}) {
@@ -20,7 +20,7 @@ export default function Page({params}:{params:{id:string}}) {
             </section>
 
             <section className="px-10 py-10">
-                <div className="text-[56px] font-bold">Racha Island</div>
+                <div className="text-[56px] font-bold">Boat</div>
                 <div className="flex  gap-2 font-semibold"><MapPin />Location :  Phuket , Thailand</div>
                 <div className="flex flex-wrap gap-4 py-5">
 
@@ -85,7 +85,7 @@ export default function Page({params}:{params:{id:string}}) {
                                     </div>
                                 </div>
                             </div>
-                            <Link href={`/categories/island/booking?id=${params.id}`}>
+                            <Link href={`/categories/island/boat/booking?id=${params.id}`}>
                                 <Button className="bg-[--primary] text-white w-full mt-4 py-2 rounded-lg font-semibold">
                                     BOOK NOW
                                 </Button>
