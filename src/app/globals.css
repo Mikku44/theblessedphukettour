@@ -20,6 +20,42 @@
   }
 }
 
+.modern-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: #a3a3a3 #f0f0f0; /* Thumb color and track color for Firefox */
+  border-radius: 10px;
+}
+
+.modern-scroll::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+.modern-scroll::-webkit-scrollbar-track {
+  background: #f0f0f0; /* Track color */
+  border-radius: 10px; /* Rounded track corners */
+}
+
+.modern-scroll::-webkit-scrollbar-thumb {
+  background-color: var(--primary); /* Thumb color */
+  border-radius: 10px; /* Rounded thumb corners */
+  border: 3px solid #f0f0f0; /* Adds space around the thumb */
+}
+
+.modern-scroll::-webkit-scrollbar-thumb:hover {
+  background-color: #7a7a7a; /* Darker color on hover */
+}
+
+
+.not-selector {
+  user-drag: none;
+  -webkit-user-drag: none;
+  user-select: none;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+}
+
 body {
   scroll-behavior: smooth;
   color: var(--foreground);

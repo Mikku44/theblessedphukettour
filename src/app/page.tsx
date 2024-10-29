@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { useTranslations } from 'next-intl';
 
-import { ArrowRight, MapPin, MessageCircle, Waves, Wind } from "lucide-react";
+import { ArrowRight, ArrowUpRight, MapPin, MessageCircle, Waves, Wind } from "lucide-react";
 import { Button } from "@nextui-org/button";
 import DraggableScroll from "./components/DraggableScroll";
 import RecommendedCard from "./components/RecommendedCard";
@@ -34,7 +34,7 @@ export default function Home() {
     { text: "Whispering Pines", description: "3 Friends joined" }
   ]
 
-  const image = "/images/trip.png"
+  const image = "https://images.unsplash.com/photo-1458538977777-0549b2370168?q=80&w=2074&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
   return (
     <>
 
@@ -89,7 +89,7 @@ export default function Home() {
 
       <section className="bg-blue-50">
         <div className="text-[34px] text-[--primary] font-bold py-5 p-10">{t('Recommended for you')}</div>
-        <DraggableScroll className="p-5 px-10" items={
+        <DraggableScroll className="p-5 px-10 scrollbar-hide" items={
           [
             places.map((item, key) => <RecommendedCard key={key} text={item.text} description={item.description} image={item.image} className="bg-[--primary] cursor-pointer select-none min-w-[200px]" />,)
 
@@ -100,15 +100,34 @@ export default function Home() {
 
       <section className="bg-[--primary] py-10">
         <div className="text-[34px] text-white font-bold py-5 p-10 flex gap-2"><div className="icon">&#xf773;</div>{t('We also have')}</div>
-        <div className="px-10 grid lg:grid-cols-2 md:grid-cols-2 grid-cols-1 gap-5">
-        
-          {[1,2,3,4,5,6].map((item:any,index:number) =>
-          <div key={index} className="rounded-[28px] p-5 border-[1px] flex flex-col justify-end bg-white h-[350px] text-white shadow-sm duration-150 group" style={{ background: `linear-gradient(to bottom, rgba(255, 255, 255, 0), rgba(0, 0, 0, 0.853)),url(${image})` ,backgroundRepeat:"no-repeat",backgroundSize:"cover"}}>
-            <div className="font-bold text-[24px]  duration-200">Title</div>
-            <div className="text-[12px] duration-200 ">Lorem ipsum dolor sit amet consectetur Lorem ipsum dolor sit amet. adipisicing elit.</div>
-          </div>)}
+        <div className="px-10 grid lg:grid-cols-2 md:grid-cols-2 grid-cols-1 gap-5 justify-items-center">
+          {[1, 2, 3, 4, 5, 6].map((item, index) => (
+            <div className="w-[80%] rounded-lg shadow-lg p-4 bg-white space-y-4">
+              {/* Header */}
+              <div className="flex justify-between items-center">
+                <div className="flex items-center gap-2 bg-black text-white text-sm px-2 py-1 rounded-full">
+                  <span>2d left</span>
+                </div>
+                <button className="p-2 rounded-full bg-gray-100 hover:bg-gray-200">
+                <ArrowUpRight />
+                </button>
+              </div>
 
+              {/* Title and Description */}
+              <div>
+                <h2 className="text-lg font-bold">GET 30% DISCOUNT!</h2>
+                <p className="text-gray-500 text-sm">Any destination with Bidje Airlines!</p>
+              </div>
+
+              {/* Image */}
+              <div className="rounded-lg overflow-hidden">
+                <img src="https://images.unsplash.com/photo-1458538977777-0549b2370168?q=80&w=2074&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Mountain" className="w-full h-auto" />
+              </div>
+            </div>
+
+          ))}
         </div>
+
       </section>
 
       <section className="p-10">
@@ -153,8 +172,8 @@ export default function Home() {
           <img className="w-[400px]" src="https://png.pngtree.com/png-clipart/20240305/original/pngtree-3d-mobile-phone-frame-mockup-template-illustration-png-image_14512826.png" alt="" />
           <div className="flex flex-col gap-4">
             <div className="text-sm w-[400px]">
-            Experience the Best in Travel:
-            A Journey Where Every Destination Becomes an Unforgettable Adventure!
+              Experience the Best in Travel:
+              A Journey Where Every Destination Becomes an Unforgettable Adventure!
             </div>
             <div className="flex flex-col gap-2">
               <Link href="#" className="" ><Image src={"/images/googleplay.svg"} alt="Google play" width={200} height={300} /></Link >
