@@ -6,16 +6,21 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "export": "next export"
   },
   "dependencies": {
+    "@nextui-org/autocomplete": "^2.1.7",
     "@nextui-org/button": "^2.0.38",
+    "@nextui-org/checkbox": "^2.1.5",
+    "@nextui-org/date-picker": "^2.1.8",
     "@nextui-org/input": "^2.2.5",
     "@nextui-org/popover": "^2.1.29",
+    "@nextui-org/radio": "^2.1.5",
     "@nextui-org/system": "^2.2.6",
     "@nextui-org/tabs": "^2.0.37",
     "@nextui-org/theme": "^2.2.11",
-    "firebase": "^10.14.0",
+    "firebase": "^10.14.1",
     "flowbite": "^2.5.2",
     "flowbite-react": "^0.10.2",
     "framer-motion": "^11.11.0",

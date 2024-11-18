@@ -8,6 +8,8 @@ import { getLocale, getMessages } from 'next-intl/server';
 import { Inter,Chakra_Petch,Noto_Kufi_Arabic ,Montserrat} from 'next/font/google'
 import Footer from "./components/Footer";
 import FloatingChat from "./components/FloatingChat";
+import Head from 'next/head';
+
 
 const fluttericon = localFont({
   src: './fonts/MyFlutterApp.ttf',
@@ -41,6 +43,7 @@ const montserrat = Montserrat({
 
 export const metadata: Metadata = {
   title: "The Blessed Phuket Tour",
+
   description: "จองทัวร์ที่สะดวกและครบครันในภูเก็ต ค้นหาและจองทัวร์ที่เหมาะกับสไตล์การท่องเที่ยวของคุณ ไม่ว่าจะเป็นการเดินทางสุดหรู พักผ่อนบนชายหาด หรือผจญภัยในธรรมชาติ พร้อมข้อเสนอพิเศษและบริการที่น่าเชื่อถือ ให้คุณสัมผัสประสบการณ์การท่องเที่ยวที่น่าจดจำในภูเก็ตอย่างสมบูรณ์แบบ",
 };
 
@@ -58,6 +61,9 @@ export default async function RootLayout({
 
   return (
     <html lang={locale}>
+        <Head>
+        <meta name="agd-partner-manual-verification" content="" />
+      </Head>
       <body
         className={`${montserrat.className} ${montserrat.variable} ${noto.className} ${inter.className} ${chakra.className} ${fluttericon.variable} antialiased`}
       >

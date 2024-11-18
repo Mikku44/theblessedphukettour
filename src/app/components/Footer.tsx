@@ -38,13 +38,14 @@ export default function Footer() {
                 </div>
 
                 <div>
-                    <h4 className="font-semibold mb-2">Get the app</h4>
-                    <div className="flex space-x-2">
+                    <h4 className="font-semibold mb-2">Get <span className="text-red-700">Jalanistra </span>on</h4>
+                    <div className="flex flex-col gap-2">
                         <Link href="#" className="" ><Image src={"/images/googleplay.svg"} alt="Google play" width={200} height={300} /></Link >
                         <Link href="#" className="" ><Image src={"/images/appstore.svg"} alt="App store" width={200} height={300} /></Link >
                     </div>
                     <div className="py-5">
                         <div className="text-sm font-bold">Payment Method</div>
+                        <Image src={"/images/paymentmethods.png?data=1"} alt="stripe payment" className="ml-[-10px]" width={300} height={300} />
                         <Image src={"/images/stripe.png"} alt="stripe payment" className="ml-[-10px]" width={200} height={300} />
                     </div>
                 </div>

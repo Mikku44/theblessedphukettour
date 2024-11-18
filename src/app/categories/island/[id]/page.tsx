@@ -8,11 +8,16 @@ import { Button, Card } from "flowbite-react";
 import Collapse from "../../../components/collapse";
 import Link from "next/link";
 import DraggableScroll from "../../../components/DraggableScroll";
+import PlanSelector from "../../../components/planSelector";
+import { DateRangePicker } from "@nextui-org/date-picker";
+import { Checkbox } from "@nextui-org/checkbox";
+import PlaceSelector from "../../../components/placeSelector";
+
 
 export default function Page({ params }: { params: { id: string } }) {
 
     const [currentTab, setCurrentTap] = useState("");
-
+    const [shuttleOn, setShuttleOn] = useState(false);
     return (
 
         <div className="min-h-[80vh] max-w-[80vw] mx-auto flex justify-center relative flex-wrap py-20">
@@ -26,7 +31,18 @@ export default function Page({ params }: { params: { id: string } }) {
                     <div className="text-[56px] font-bold">Racha Island</div>
                     <div className="flex  gap-2 font-semibold"><MapPin />Location :  Phuket , Thailand</div>
                     <div className="flex flex-wrap gap-4 py-5">
-                        <Tabs variant={"underlined"} aria-label="Tabs variants" onSelectionChange={e => setCurrentTap(e.toString())}>
+                        <Tabs
+
+                            radius="sm"
+                            color="warning"
+                            variant="light"
+                            classNames={{
+                                base: ' text-white',
+                                tab: "bg-[--primary]"
+                            }}
+                            size="lg"
+                            aria-label="Tabs variants"
+                            onSelectionChange={e => setCurrentTap(e.toString())}>
                             <Tab key="Info" title="Info" />
                             <Tab key="Program" title="Program" />
                             <Tab key="Note" title="Note" />
@@ -48,16 +64,18 @@ export default function Page({ params }: { params: { id: string } }) {
 
             <section className="lg:w-1/2 flex justify-center py-5">
                 <div className="border rounded-[20px] p-6 flex flex-col gap-10 sticky top-20 shadow-lg lg:w-[70%] min-h-fit h-[400px]">
-                    <div className="flex justify-between">
-                        <div className="text-2xl font-semibold">
-                            <div className="">Adult Ticket Price</div>
-                            ฿1500 <span className="text-sm text-gray-500">/ticket</span>
-                        </div>
-                        <div className="flex justify-between items-center mt-2">
-                            <span className="text-gray-600 flex gap-2"><Star /><span> 4.95</span></span>
-                        </div>
+                    <div className="grid">
+                        <PlanSelector />
+
                     </div>
-                    <div className="mt-4 border rounded-lg ">
+                    <DateRangePicker
+                        label="Stay duration"
+                        description="Please enter your stay duration"
+                        className=""
+                    />
+                     <Checkbox defaultSelected checked={shuttleOn} onChange={e => setShuttleOn(e.currentTarget.checked)} radius="full">Need a shuttle</Checkbox>
+                     {shuttleOn && <PlaceSelector />}
+                    {/* <div className="mt-4 border rounded-lg ">
                         <div className="flex justify-between mb-3 p-4">
                             <div>
                                 <div className="text-black text-lg font-bold">CHECK-IN</div>
@@ -89,9 +107,9 @@ export default function Page({ params }: { params: { id: string } }) {
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </div> */}
                     <Link href={`/categories/island/booking?id=${params.id}`}>
-                        <Button className="bg-[--primary] text-white w-full mt-4 py-2 rounded-lg font-semibold">
+                        <Button className="bg-[--secondary] hover:bg-[--secondary-50] text-white w-full mt-4 py-2 rounded-lg font-semibold">
                             BOOK NOW
                         </Button>
                     </Link>
@@ -100,12 +118,12 @@ export default function Page({ params }: { params: { id: string } }) {
 
 
             <section className="w-full">
-                <div className="text-xl">You may also like</div>
+                <div className="text-xl">Reviews from customers</div>
 
 
                 <DraggableScroll className="p-5 px-10 " items={
                     [
-                        [1, 2, 3, 4,5,6,7,8].map((item, key) => <Card className="max-w-sm w-[500px] ">
+                        [1, 2, 3, 4, 5, 6, 7, 8].map((item, key) => <Card className="max-w-sm w-[500px] ">
                             <h5 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
                                 Noteworthy technology acquisitions 2021
                             </h5>

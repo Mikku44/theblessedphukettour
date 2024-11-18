@@ -8,8 +8,8 @@ const config: Config = {
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
     "./node_modules/flowbite/**/*.js",
+    "./node_modules/@nextui-org/theme/dist/components/(autocomplete|button|checkbox|date-picker|input|popover|radio|tabs|ripple|spinner|listbox|divider|scroll-shadow|calendar|date-input).js",
     flowbite.content(),
-    "./node_modules/@nextui-org/theme/dist/components/(button|input|popover|tabs|ripple|spinner).js"
   ],
   theme: {
     extend: {

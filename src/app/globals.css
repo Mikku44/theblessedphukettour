@@ -11,6 +11,7 @@
 
 
   --secondary:#fab00b;
+  --secondary-50:#df9c0d;
 }
 
 @media (prefers-color-scheme: dark) {
