@@ -1,5 +1,5 @@
 'use client'
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Carousel from "../../../components/carousel";
 import TimelineTrip from "../../../components/Timeline";
 import { Tab, Tabs } from "@nextui-org/tabs";
@@ -12,24 +12,59 @@ import PlanSelector from "../../../components/planSelector";
 import { DateRangePicker } from "@nextui-org/date-picker";
 import { Checkbox } from "@nextui-org/checkbox";
 import PlaceSelector from "../../../components/placeSelector";
+import { db } from "../../../api/config/config";
+import { collection, doc, getDoc } from "firebase/firestore";
+import CustomerReview from "../../../components/customerReview";
 
 
 export default function Page({ params }: { params: { id: string } }) {
 
     const [currentTab, setCurrentTap] = useState("");
     const [shuttleOn, setShuttleOn] = useState(false);
+
+    const [data, setData] = useState<any>();
+    const [lang, setLang] = useState("en");
+
+    async function GetData() {
+        const docRef = doc(db, "islands", params?.id);
+        const docSnap = await getDoc(docRef);
+
+
+        if (docSnap.exists()) {
+            console.log("Document data:", docSnap.data());
+            setData(docSnap.data())
+        } else {
+            // docSnap.data() will be undefined in this case
+            console.log("No such document!");
+        }
+
+    }
+
+    useEffect(() => {
+        console.log("DATA  : ", data)
+    }, [data]);
+
+    useEffect(() => {
+        GetData();
+    }, []);
     return (
 
-        <div className="min-h-[80vh] max-w-[80vw] mx-auto flex justify-center relative flex-wrap py-20">
-            <section className="lg:w-1/2 w-full">
-                <Carousel items={[
-                    <div className="bg-black h-full text-white flex justify-center items-center">PIC 1</div>,
-                    <div className="bg-black h-full text-white flex justify-center items-center">PIC 2 </div>
+        <div className="min-h-[80vh]  mx-auto flex justify-center relative flex-wrap py-20">
+            <section className="lg:w-[60%] w-full">
+                <Carousel items={
+                    data ?
+                        data?.image_url?.[lang]?.map((item: any, index: number) => <div key={index} className="bg-black h-full text-white flex justify-center">
+                            <img src={item} className="w-full h-full object-cover" alt="" />
+                        </div>)
+                        :
+                        [
+                            <div className="bg-black h-full text-white flex justify-center items-center">PIC 1</div>,
+                            <div className="bg-black h-full text-white flex justify-center items-center">PIC 2 </div>
 
-                ]} className="m-4" />
+                        ]} className="m-4" />
                 <div className="px-10 py-10">
-                    <div className="text-[56px] font-bold">Racha Island</div>
-                    <div className="flex  gap-2 font-semibold"><MapPin />Location :  Phuket , Thailand</div>
+                    <div className="text-[56px] font-bold">{data?.place_name || "Island Name"}</div>
+                    <div className="flex  gap-2 font-semibold"><MapPin />Location :  {data?.province || "Phuket"} , Thailand</div>
                     <div className="flex flex-wrap gap-4 py-5">
                         <Tabs
 
@@ -51,10 +86,10 @@ export default function Page({ params }: { params: { id: string } }) {
                     <div className="flex justify-between flex-wrap">
                         <div className=" overflow-auto hidden-scroll px-2 ">
                             {currentTab === "Info" && <Collapse>
-                                <Info />
+                                <Info data={data} />
                             </Collapse>}
-                            {currentTab === "Program" && <TimelineTrip />}
-                            {currentTab === "Note" && <Note />}
+                            {currentTab === "Program" && <TimelineTrip program={data?.program_timeline} />}
+                            {currentTab === "Note" && <Note notes={data?.note} tourInclude={data?.tour_include} />}
                         </div>
 
                     </div>
@@ -62,19 +97,19 @@ export default function Page({ params }: { params: { id: string } }) {
             </section>
 
 
-            <section className="lg:w-1/2 flex justify-center py-5">
-                <div className="border rounded-[20px] p-6 flex flex-col gap-10 sticky top-20 shadow-lg lg:w-[70%] min-h-fit h-[400px]">
+            <section className="lg:w-[30%] flex justify-center py-5">
+                <div className="border rounded-[20px] p-4 flex flex-col gap-10 sticky top-20 shadow-lg w-full min-h-fit h-[400px]">
                     <div className="grid">
-                        <PlanSelector />
-
+                        {data && <PlanSelector data={data?.ticket_price} />
+                        }
                     </div>
                     <DateRangePicker
                         label="Stay duration"
                         description="Please enter your stay duration"
                         className=""
                     />
-                     <Checkbox defaultSelected checked={shuttleOn} onChange={e => setShuttleOn(e.currentTarget.checked)} radius="full">Need a shuttle</Checkbox>
-                     {shuttleOn && <PlaceSelector />}
+                    <Checkbox checked={shuttleOn} onChange={e => setShuttleOn(e.currentTarget.checked)} radius="full">Need a shuttle</Checkbox>
+                    {shuttleOn && <PlaceSelector />}
                     {/* <div className="mt-4 border rounded-lg ">
                         <div className="flex justify-between mb-3 p-4">
                             <div>
@@ -117,20 +152,13 @@ export default function Page({ params }: { params: { id: string } }) {
             </section>
 
 
-            <section className="w-full">
-                <div className="text-xl">Reviews from customers</div>
+            <section className="w-[90vw] mx-auto">
+                <div className="text-xl px-10">Reviews from customers</div>
 
 
-                <DraggableScroll className="p-5 px-10 " items={
+                <DraggableScroll className="p-5 px-10 pretty-scroll" items={
                     [
-                        [1, 2, 3, 4, 5, 6, 7, 8].map((item, key) => <Card className="max-w-sm w-[500px] ">
-                            <h5 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
-                                Noteworthy technology acquisitions 2021
-                            </h5>
-                            <p className="font-normal text-gray-700 dark:text-gray-400">
-                                Here are the biggest enterprise technology acquisitions of 2021 so far, in reverse chronological order.
-                            </p>
-                        </Card>,)
+                        [1, 2, 3, 4, 5, 6, 7, 8].map((item, key) => <CustomerReview/>,)
 
                     ]
                 } />
@@ -142,12 +170,12 @@ export default function Page({ params }: { params: { id: string } }) {
 
 
 
-function Info() {
+function Info({ data }) {
     return <>
         <div className="py-3">
             {/* <div className="text-[--primary] font-bold text-2xl py-2"></div> */}
             <div className="text-zinc-800 flex gap-2 px-1">
-                {["Snorkerling", "Swimming", "finding dolphin"].map((item: any, index: number) =>
+                {data && data?.activities?.split(",").map((item: any, index: number) =>
                     <div className="p-2 px-4 rounded-[12px] border w-fit h-fit shadow-md">
 
                         {item}
@@ -157,96 +185,87 @@ function Info() {
         <div className={`py-3`}>
             <div className="text-[--primary] font-bold text-2xl py-2">Description :</div>
             <div className="text-zinc-800">
-                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Consequatur, nobis.
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Consectetur sunt,
-                eius minus eligendi, aperiam iure temporibus hic est accusamus perferendis facilis
-                libero iusto earum molestias repellat eaque ipsa! Velit, amet.
+                {data?.place_des || "description"}
             </div>
         </div>
         <div className="py-3">
             <div className="text-[--primary] font-bold text-2xl py-2">Visit Point :</div>
             <div className="text-zinc-800">
-                Racha Island
+                {data?.visit_point || "Visit Point info"}
             </div>
         </div>
         <div className="py-3">
             <div className="text-[--primary] font-bold text-2xl py-2">Reference Page :</div>
             <div className="text-zinc-800">
-                Island 004
+                {data?.reference_page || "Ref page"}
             </div>
         </div>
         <div className="py-3">
             <div className="text-[--primary] font-bold text-2xl py-2">Travel Via :</div>
             <div className="text-zinc-800">
-                Tour boat
+                {data?.travel_via || "Travel via"}
             </div>
         </div>
         <div className="py-3">
             <div className="text-[--primary] font-bold text-2xl py-2">Boat Duration :</div>
             <div className="text-zinc-800">
-                1 hours
+                {data?.boat_duration || "boat duration"}
             </div>
         </div>
         <div className="py-3">
             <div className="text-[--primary] font-bold text-2xl py-2">Adult Ticket Price :</div>
             <div className="text-zinc-800">
-                1500
+                {data?.ticket_price?.adult ||"No data"}
             </div>
         </div>
         <div className="py-3">
             <div className="text-[--primary] font-bold text-2xl py-2">Child Ticket Price :</div>
             <div className="text-zinc-800">
-                300
+            {data?.ticket_price?.child ||"No data"}
             </div>
         </div>
-        {/* <div className="py-3">
+        <div className="py-3">
             <div className="text-[--primary] font-bold text-2xl py-2">Meal :</div>
             <div className="text-zinc-800">
-                3 meals , drinks, snacks and fruit.
+               {data?.meal ||"No meals"}
             </div>
-        </div> */}
+        </div>
         <div className="py-3">
             <div className="text-[--primary] font-bold text-2xl py-2">Halal :</div>
             <div className="text-zinc-800">
-                Yes
+            <Checkbox isSelected={data?.food_halal}>{data?.food_halal ? "Yes" : "No"}</Checkbox>
             </div>
         </div>
 
-        {/* <div className="py-3">
+        <div className="py-3">
             <div className="text-[--primary] font-bold text-2xl py-2">Total Hours :</div>
             <div className="text-zinc-800">
-                8:30 AM -4:40 PM.
+                {data?.total_hours ||"No total Hours"}
             </div>
-        </div> */}
+        </div>
         <div className="py-3 pb-10">
             <div className="text-[--primary] font-bold text-2xl py-2">How to book the trip :</div>
-            <div className="text-zinc-800">
-                <div className="">1.Lorem ipsum dolor sit amet, consectetur adipisicing elit. Consequatur, nobis.</div>
-                <div className="">2.Lorem ipsum dolor sit amet consectetur adipisicing elit. Consectetur sunt,</div>
-                <div className="">3.eius minus eligendi, aperiam iure temporibus hic est accusamus perferendis facilis
-                    libero iusto earum molestias repellat eaque ipsa! Velit, amet.</div>
+            <div className="text-zinc-800 grid gap-2">
+               {data?.how_to_book?.map((item,index) => <div className="" key={index}>{item||"how to book"}</div>)}
+          
             </div>
         </div>
     </>
 }
-function Note() {
+function Note({ notes, tourInclude }: any) {
     return <>
         <div className="py-3">
             <div className="text-[--primary] font-bold text-2xl py-2">Tour include :</div>
             <div className="text-zinc-800">
-                <div className="">- Lorem ipsum dolor sit amet, consectetur adipisicing elit. Consequatur, nobis.</div>
-                <div className="">- Lorem ipsum dolor sit amet consectetur adipisicing elit. Consectetur sunt,</div>
-                <div className="">- eius minus eligendi, aperiam iure temporibus hic est accusamus perferendis facilis</div>
-                <div className="">- libero iusto earum molestias repellat eaque ipsa! Velit, amet.</div>
+                {tourInclude?.map((item, index) => <div className="" key={index}>{item || "- Tour Include"}</div>)}
+
             </div>
         </div>
         <div className="py-3">
             <div className="text-[--primary] font-bold text-2xl py-2">Note :</div>
             <div className="text-zinc-800">
-                <div className="">1.Lorem ipsum dolor sit amet, consectetur adipisicing elit. Consequatur, nobis.</div>
-                <div className="">2.Lorem ipsum dolor sit amet consectetur adipisicing elit. Consectetur sunt,</div>
-                <div className="">3.eius minus eligendi, aperiam iure temporibus hic est accusamus perferendis facilis
-                    libero iusto earum molestias repellat eaque ipsa! Velit, amet.</div>
+                {notes?.map((item, index) => <div className="" key={index}>{`${item}` || "1.Note."}</div>)}
+
             </div>
         </div>
 

@@ -1,17 +1,22 @@
 
-import { cookies } from 'next/headers'
 import LangSwitch from './langSwitch'
 import Link from 'next/link'
 import { Button } from '@nextui-org/button'
 import { useTranslations } from 'next-intl';
+import { getSession } from '../../ultilities/lib';
 
 
 export default function Navbar(){
     const t = useTranslations();
 
-
+    const session = getSession();
     return <div className="w-full flex justify-between sticky top-0 py-5 px-10  text-white z-10 bg-black/50 ">
-        <div>LOGO</div>
+        <div>LOGO
+
+            {JSON.stringify(session)}
+        </div>
+
+
 
         <ul className='lg:grid md:hidden hidden grid-cols-5 gap-5 justify-center items-center justify-items-center duration-150 '>
             <Link className=' w-full text-center duration-150' href="/" >

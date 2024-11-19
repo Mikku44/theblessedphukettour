@@ -43,12 +43,19 @@ export const CustomRadio = (props: RadioProps) => {
   );
 };
 
-export default function PlanSelector() {
+export default function PlanSelector({data}:any) {
+  const plans = Object.entries(data).map(([key, value]) => {
+    return {type:key,price:value}
+  });
   return (
     <RadioGroup label="Plans" className="w-full ">
-      {[1,2,3,4,5].map((item,index)=><CustomRadio key={index} description={(item*200).toString()+" THB"} value={item.toString()}>
-        Program {item}
-      </CustomRadio>)}
+
+      {plans.length ? plans?.map((item,index)=><CustomRadio key={index} description={item?.price.toString()+" THB"} value={item?.price.toString()}>
+        {item?.type}
+      </CustomRadio>)
+      :
+      <div className="">There is no plans to select.</div>
+      }
       
     </RadioGroup>
   );
