@@ -15,7 +15,7 @@ import PlaceSelector from "../../../components/placeSelector";
 import { db } from "../../../api/config/config";
 import { collection, doc, getDoc } from "firebase/firestore";
 import CustomerReview from "../../../components/customerReview";
-
+import { Calendar } from "@nextui-org/calendar";
 
 export default function Page({ params }: { params: { id: string } }) {
 
@@ -99,69 +99,67 @@ export default function Page({ params }: { params: { id: string } }) {
 
             <section className="lg:w-[30%] flex justify-center py-5">
                 <div className="border rounded-[20px] p-4 flex flex-col gap-10 sticky top-20 shadow-lg w-full min-h-fit h-[400px]">
-                    <div className="grid">
-                        {data && <PlanSelector data={data?.ticket_price} />
-                        }
+                    <div className="grid gap-2">
+                        {/* {data && <PlanSelector data={data?.ticket_price} />
+                        } */}
+                        {[1, 2].map((item, index) => {
+                            return <div key={index} className="rounded-md border-2 p-2 px-4 flex justify-between">
+                                <div className="">
+                                    <div className="text-lg">Child</div>
+                                    <div className="text-sm">100 THB</div>
+                                </div>
+                                <div className="flex gap-2 items-center">
+                                    <Button className="bg-[--primary]" >-</Button>
+                                    <div className="px-2">0</div>
+                                    <Button className="bg-[--primary]" >+</Button>
+                                </div>
+                            </div>
+                        })}
                     </div>
-                    <DateRangePicker
+                    {/* <DateRangePicker
                         label="Stay duration"
                         description="Please enter your stay duration"
                         className=""
-                    />
+                    /> */}
+                    <div className="w-full flex justify-center">
+                        <Calendar
+                            onChange={(e) => alert(JSON.stringify(e))
+                            }
+                            className=""
+                            aria-label="Please enter your stay duration"
+                            showMonthAndYearPickers
+                        />
+                    </div>
                     <Checkbox checked={shuttleOn} onChange={e => setShuttleOn(e.currentTarget.checked)} radius="full">Need a shuttle</Checkbox>
                     {shuttleOn && <PlaceSelector />}
-                    {/* <div className="mt-4 border rounded-lg ">
-                        <div className="flex justify-between mb-3 p-4">
-                            <div>
-                                <div className="text-black text-lg font-bold">CHECK-IN</div>
-                                <div className="font-semibold text-xs">01/24/2023</div>
-                            </div>
-                            <div>
-                                <div className="text-black text-lg font-bold">CHECKOUT</div>
-                                <div className="font-semibold text-xs">01/28/2023</div>
-                            </div>
+                    
+
+                    <div className="flex justify-between">
+                        <div className="text-sm">Total Price : </div>
+                        <div className="text-lg font-bold">฿ 1,500</div>
+                    </div>
+                    <div className="grid grid-cols-2 gap-2">
+                        <div>
+                            <Button className="bg-[--primary] hover:bg-[--primart-50] text-white w-full mt-4 py-2 rounded-lg font-semibold">
+                                Add to Cart
+                            </Button>
                         </div>
-                        <div className="border-t">
-                            <div className="flex justify-between mb-3 p-4">
-                                <div>
-                                    <div className="text-black text-lg font-bold">Total Hours </div>
-                                    <div className="font-semibold text-xs">8:30 AM - 4:40 PM</div>
-                                </div>
-                                <div>
-                                    <div className="text-black text-lg font-bold text-end w-full">Meal </div>
-                                    <div className="font-semibold text-xs">3 meals , drinks, snacks and fruit.</div>
-                                </div>
-                            </div>
-                        </div>
-                        <div className=" border-t ">
-                            <div className="p-4 flex justify-between">
-                                <div className="text-black text-lg font-bold">GUESTS</div>
-                                <div className="font-semibold text-xs flex items-center">
-                                    6 guests
-                                    <span className="ml-2"><ChevronDown /></span>
-                                </div>
-                            </div>
-                        </div>
-                    </div> */}
-                    <Link href={`/categories/island/booking?id=${params.id}`}>
-                        <Button className="bg-[--secondary] hover:bg-[--secondary-50] text-white w-full mt-4 py-2 rounded-lg font-semibold">
-                            BOOK NOW
-                        </Button>
-                    </Link>
+                        <Link href={`/checkout`}>
+                            <Button className="bg-[--secondary] hover:bg-[--secondary-50] text-white w-full mt-4 py-2 rounded-lg font-semibold">
+                                BOOK NOW
+                            </Button>
+                        </Link>
+
+                    </div>
                 </div>
             </section>
 
 
             <section className="w-[90vw] mx-auto">
-                <div className="text-xl px-10">Reviews from customers</div>
+                <div className="text-xl px-10 pb-10">Reviews from customers</div>
 
 
-                <DraggableScroll className="p-5 px-10 pretty-scroll" items={
-                    [
-                        [1, 2, 3, 4, 5, 6, 7, 8].map((item, key) => <CustomerReview/>,)
-
-                    ]
-                } />
+                <div className="grid lg:grid-cols-3 gap-2">{[1, 2, 3, 4, 5, 6, 7, 8].map((item, key) => <CustomerReview />,)}</div>
             </section>
         </div>
 
@@ -212,7 +210,7 @@ function Info({ data }) {
                 {data?.boat_duration || "boat duration"}
             </div>
         </div>
-        <div className="py-3">
+        {/* <div className="py-3">
             <div className="text-[--primary] font-bold text-2xl py-2">Adult Ticket Price :</div>
             <div className="text-zinc-800">
                 {data?.ticket_price?.adult ||"No data"}
@@ -223,33 +221,33 @@ function Info({ data }) {
             <div className="text-zinc-800">
             {data?.ticket_price?.child ||"No data"}
             </div>
-        </div>
+        </div> */}
         <div className="py-3">
             <div className="text-[--primary] font-bold text-2xl py-2">Meal :</div>
             <div className="text-zinc-800">
-               {data?.meal ||"No meals"}
+                {data?.meal || "No meals"}
             </div>
         </div>
         <div className="py-3">
             <div className="text-[--primary] font-bold text-2xl py-2">Halal :</div>
             <div className="text-zinc-800">
-            <Checkbox isSelected={data?.food_halal}>{data?.food_halal ? "Yes" : "No"}</Checkbox>
+                <Checkbox isSelected={data?.food_halal}>{data?.food_halal ? "Yes" : "No"}</Checkbox>
             </div>
         </div>
 
         <div className="py-3">
             <div className="text-[--primary] font-bold text-2xl py-2">Total Hours :</div>
             <div className="text-zinc-800">
-                {data?.total_hours ||"No total Hours"}
+                {data?.total_hours || "No total Hours"}
             </div>
         </div>
-        <div className="py-3 pb-10">
+        {/* <div className="py-3 pb-10">
             <div className="text-[--primary] font-bold text-2xl py-2">How to book the trip :</div>
             <div className="text-zinc-800 grid gap-2">
                {data?.how_to_book?.map((item,index) => <div className="" key={index}>{item||"how to book"}</div>)}
           
             </div>
-        </div>
+        </div> */}
     </>
 }
 function Note({ notes, tourInclude }: any) {

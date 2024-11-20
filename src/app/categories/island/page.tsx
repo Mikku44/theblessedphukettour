@@ -15,21 +15,21 @@ export default function Page() {
     const [currentTap, setCurrentTap] = useState("island");
 
 
-    return <main className="min-h-screen relative top-0 ">
+    return <main className="min-h-screen">
         <section className="">
-            <Carousel items={
-
-                ["https://images.unsplash.com/photo-1443181994330-3e365ff8949e?q=80&w=1781&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-                    "https://images.unsplash.com/photo-1529333241880-9558d5e5e064?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NzJ8fGlzbGFuZHxlbnwwfHwwfHx8MA%3D%3D",
-                    "https://images.unsplash.com/photo-1527401850656-0f34108fdb30?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NzV8fGlzbGFuZHxlbnwwfHwwfHx8MA%3D%3D"].map((item, index) =>
-                        <div key={index} className="bg-black h-full text-white flex justify-center">
+            <div className="w-full bg-black">
+                <Carousel items={
+                    [
+                        "/images/banner/banner1.png",
+                        "/images/banner/banner2.png",
+                        "/images/banner/banner3.png",
+                    ].map((item, index) =>
+                        <div key={index} className="bg-black  text-white ">
                             <img src={item} alt="" />
                         </div>
                     )
-
-
-
-            } className="m-4 h-[500px]" />
+                } className="w-full h-[620px]" />
+            </div>
             <div className="mx-auto w-[80vw]">
 
                 <div className="flex flex-wrap gap-4 py-2">
@@ -77,7 +77,7 @@ function Islands() {
         const docSnap = await getDocs(docRef);
         if (!docSnap.empty) {
             docSnap.forEach((doc) => {
-              
+
                 const docData = { id: doc.id, ...doc.data() };
                 setData((prev: any) => [docData, ...prev])
             });
@@ -87,26 +87,26 @@ function Islands() {
     }
 
     useEffect(() => {
-        console.log("DATA  : ",data)
+        console.log("DATA  : ", data)
     }, [data]);
 
     useEffect(() => {
         GetData();
     }, []);
     return <>
-        <div className="grid lg:grid-cols-3  gap-2  w-full py-5">
+        <div className="grid lg:grid-cols-2  gap-2  w-full py-5">
             {data.length > 0 && data.map((item: any, index: number) => {
 
                 return <a key={index} href={`/categories/island/${item?.id}`} className="rounded-xl w-full h-[300px] p-2">
                     <div className="rounded-md shadow-md overflow-clip h-[80%] w-full aspect-square">
                         <img
-                        className="h-full w-full object-cover"
-                        src={item?.image_url?.[`${lang}`]?.[0] || "https://images.unsplash.com/photo-1483683804023-6ccdb62f86ef?q=80&w=1935&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"} alt="" />
+                            className="h-full w-full object-cover"
+                            src={item?.image_url?.[`${lang}`]?.[0] || "https://images.unsplash.com/photo-1483683804023-6ccdb62f86ef?q=80&w=1935&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"} alt="" />
                     </div>
                     <div className="font-bold text-[22px] pt-2">{item?.place_name || "Island Name"}</div>
                     <div className="text-red-500 flex gap-1 items-center">
                         <MapPin className="size-5"></MapPin>
-                        <div className="">{item?.province ||"Phuket"} , Thailand</div>
+                        <div className="">{item?.province || "Phuket"} , Thailand</div>
                     </div>
                 </a>
             })}

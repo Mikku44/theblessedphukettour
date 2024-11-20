@@ -1,74 +1,37 @@
 'use client'
-// import LangSwitch from './langSwitch'
-// import Link from 'next/link'
-// import { Button } from '@nextui-org/button'
-// import { useTranslations } from 'next-intl';
-// import { getSession } from '../../ultilities/lib';
 
 import { Button } from "@nextui-org/button";
 import { Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from "@nextui-org/dropdown";
 import { Navbar, NavbarBrand, NavbarContent, NavbarItem, NavbarMenu, NavbarMenuItem, NavbarMenuToggle } from "@nextui-org/navbar";
-import { ChevronDown } from "lucide-react";
+import { Avatar } from "flowbite-react";
+import { ChevronDown, ShoppingBag } from "lucide-react";
 
 import Link from "next/link";
-import { useState } from "react";
-
-
-// export default function Navbar(){
-//     const t = useTranslations();
-
-//     const session = getSession();
-//     return <div className="w-full flex justify-between sticky top-0 py-5 px-10  text-white z-10 bg-black/50 ">
-//         <div>LOGO
-
-//             {JSON.stringify(session)}
-//         </div>
-
-
-
-//         <ul className='lg:grid md:hidden hidden grid-cols-5 gap-5 justify-center items-center justify-items-center duration-150 '>
-//             <Link className=' w-full text-center duration-150' href="/" >
-//                 <li  className="hover:border-[--primary] border-b-2 border-transparent">{t('Home')}</li>
-//             </Link>
-//             <Link className=' w-full text-center duration-150' href="/categories">
-//                 <li className="hover:border-[--primary] border-b-2 border-transparent">{t('Explore Categories')}</li>
-//             </Link>
-//             <Link className=' w-full text-center duration-150' href="/car">
-//                 <li className="hover:border-[--primary] border-b-2 border-transparent">{t('Car')}</li>
-//             </Link>
-//             <Link className=' w-full text-center duration-150' href="/tour">
-//                 <li className="hover:border-[--primary] border-b-2 border-transparent">{t('Tour')}</li>
-//             </Link>
-//             <Link className=' w-full text-center duration-150' href="/add-on">
-//                 <li className="hover:border-[--primary] border-b-2 border-transparent">{t('AddOns')}</li>
-
-//             </Link>
-//         </ul>
-//         <div className="w-10"></div>
-//         <div className="lg:grid md:hidden hidden grid-flow-col gap-2 absolute right-5 top-3">
-//             <LangSwitch />
-//             <Link href="/register"><Button variant="light" className='text-white'>Sign Linkp </Button></Link>
-//             <Link href="/login"><Button className='bg-[--primary] text-white'>Sign In</Button></Link>
-//         </div>
-//     </div>
-// }
-
-
+import { useEffect, useState } from "react";
 
 
 
 export default function App() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
-
+    const [user, setUser] = useState<any>();
     const menuItems = [
         "Home",
         "Explore Categories",
         "Car",
         "Tour",
         "Add-Ons",
-
         "Log Out",
     ];
+
+    async function getUserInfo() {
+        const user = await localStorage.getItem('user');
+        user && setUser(JSON.parse(user))
+    }
+
+    useEffect(() => {
+        getUserInfo();
+       
+    }, []);
 
     const categories = [
         {
@@ -115,7 +78,7 @@ export default function App() {
 
             <NavbarContent className="sm:hidden pr-3" justify="center">
                 <NavbarBrand>
-                    {/* <AcmeLogo /> */}
+                    <Link href="/"><img src="/icons/logoonly.png" alt="Jalanista Logo" className="h-[100px] " /></Link>
 
                     <Link href="/" className="font-bold text-inherit">Home</Link>
 
@@ -125,7 +88,7 @@ export default function App() {
             <NavbarContent className="hidden sm:flex gap-4" justify="center">
                 <NavbarBrand>
                     {/* <AcmeLogo /> */}
-
+                    <Link href="/"><img src="/icons/logoonly.png" alt="Jalanista Logo" className="h-[100px] " /></Link>
                     <Link href="/" className="font-bold text-inherit">Home</Link>
 
                 </NavbarBrand>
@@ -145,7 +108,7 @@ export default function App() {
                             </DropdownTrigger>
                         </NavbarItem>
                         <DropdownMenu
-                            // key={index}
+                           
                             className="w-[340px]"
                             itemClasses={{
                                 base: "gap-4",
@@ -154,7 +117,7 @@ export default function App() {
 
                             <DropdownItem
                                 href={`/${categories[0]?.name.toLowerCase()}`}
-                                key="autoscaling"
+                                key="1"
                                 description={categories[0]?.description}
                             // endContent={<>TO</>}
                             >
@@ -163,7 +126,7 @@ export default function App() {
 
                             <DropdownItem
                                 href={`/${categories[1]?.name.toLowerCase()}`}
-                                key="autoscaling"
+                                key="2"
                                 description={categories[1]?.description}
                             // endContent={<>TO</>}
                             >
@@ -172,7 +135,7 @@ export default function App() {
 
                             <DropdownItem
                                 href={`/${categories[2]?.name.toLowerCase()}`}
-                                key="autoscaling"
+                                key="3"
                                 description={categories[2]?.description}
                             // endContent={<>TO</>}
                             >
@@ -181,7 +144,7 @@ export default function App() {
 
                             <DropdownItem
                                 href={`/${categories[3]?.name.toLowerCase()}`}
-                                key="autoscaling"
+                                key="4"
                                 description={categories[3]?.description}
                             // endContent={<>TO</>}
                             >
@@ -189,7 +152,7 @@ export default function App() {
                             </DropdownItem>
                             <DropdownItem
                                 href={`/${categories[4]?.name.toLowerCase()}`}
-                                key="autoscaling"
+                                key="5"
                                 description={categories[4]?.description}
                             // endContent={<>TO</>}
                             >
@@ -198,7 +161,7 @@ export default function App() {
 
                             <DropdownItem
                                 href={`/${categories[5]?.name.toLowerCase()}`}
-                                key="autoscaling"
+                                key="6"
                                 description={categories[5]?.description}
                             // endContent={<>TO</>}
                             >
@@ -207,7 +170,7 @@ export default function App() {
 
                             <DropdownItem
                                 href={`/${categories[6]?.name.toLowerCase()}`}
-                                key="autoscaling"
+                                key="7"
                                 description={categories[6]?.description}
                             // endContent={<>TO</>}
                             >
@@ -216,25 +179,7 @@ export default function App() {
 
 
                         </DropdownMenu>
-                        {/* {categories && categories?.map((item, index) => <DropdownMenu
-                            key={index}
-                            className="w-[340px]"
-                            itemClasses={{
-                                base: "gap-4",
-                            }}
-                        >
-
-                            <DropdownItem
-                                // href={`${item?.name.toLowerCase()}`}
-                                key="autoscaling"
-                                description={item?.description}
-                            // endContent={<>TO</>}
-                            >
-                                {item?.name}
-                            </DropdownItem>
-
-
-                        </DropdownMenu>)} */}
+                       
                     </Dropdown>
                 </NavbarItem>
                 <NavbarItem >
@@ -255,7 +200,10 @@ export default function App() {
             </NavbarContent>
 
             <NavbarContent justify="end">
+                {!user ? 
+                <>
                 <NavbarItem className="hidden lg:flex" >
+
                     <Button as={Link} href="/login" className="text-white" variant="light">
                         Login
                     </Button>
@@ -266,6 +214,37 @@ export default function App() {
                     </Button>
 
                 </NavbarItem>
+                </>:
+                <>
+                <NavbarItem>
+                    <Button isIconOnly={true} className="text-white" variant="light">
+                        <ShoppingBag />
+                    </Button>
+                </NavbarItem>
+                <NavbarItem>
+                    <Dropdown>
+                        <DropdownTrigger>
+                            <Button isIconOnly={true} radius="full" className="text-white" variant="light">
+                                <Avatar img={user?.image} className="rounded-full overflow-hidden"></Avatar>
+                            </Button>
+                        </DropdownTrigger>
+                        <DropdownMenu>
+                           {user?.displayName && <DropdownItem>
+                                <Link href="#">{user?.displayName}</Link>
+                            </DropdownItem>}
+                            <DropdownItem>
+                                <Link href="#">{user?.email}</Link>
+                            </DropdownItem>
+                            <DropdownItem onClick={()=>{
+                                    localStorage.removeItem("user")
+                                }} className="bg-red-500 hover:bg-red-800 w-full text-white text-center" >
+                               Log out
+                            </DropdownItem>
+                        </DropdownMenu>
+                    </Dropdown>
+                </NavbarItem>
+                </>
+                }
             </NavbarContent>
 
             <NavbarMenu>
