@@ -19,7 +19,7 @@ export async function POST(req) {
             .then((userCredential) => {
                 // Signed in 
                 const user = userCredential.user;
-                console.log("Already Logined  : ", user)
+                // console.log("Already Logined  : ", user)
                 const session = JSON.stringify(user) //encypt before use
                 const expires = new Date(Date.now() + 10 * 1000);
                 cookies().set("session", session, { expires, httpOnly: true })
