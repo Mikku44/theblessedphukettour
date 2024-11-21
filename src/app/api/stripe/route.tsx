@@ -2,10 +2,10 @@ import { NextApiResponse } from 'next';
 import Stripe from 'stripe';
 
 
-const stripe = new Stripe(process.env.NEXT_PUBLIC_secret_stripe);
+
 
 export async function POST(req) {
-
+    const stripe = new Stripe(process.env.NEXT_PUBLIC_secret_stripe);
     try {
         const { items } = await req.json();
         // return Response.json({data:items});
