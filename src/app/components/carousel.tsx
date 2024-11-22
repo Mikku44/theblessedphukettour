@@ -11,7 +11,7 @@ export default function Carousel({ className, items }: any) {
   ]
   items = items || dummy
   return (
-    <div className={` ${className}`}>
+    <div className={`h-[400px] ${className}`}>
       <CarouselComponent >
         {items}
 

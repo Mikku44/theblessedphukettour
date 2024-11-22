@@ -1,11 +1,12 @@
 import { NextApiResponse } from 'next';
 import Stripe from 'stripe';
+import { stripe } from '../config/config';
 
 
 
 
 export async function POST(req) {
-    const stripe = new Stripe(process.env.NEXT_PUBLIC_secret_stripe);
+  
     try {
         const { items } = await req.json();
         // return Response.json({data:items});
@@ -13,8 +14,7 @@ export async function POST(req) {
             payment_method_types: ['card'],
             line_items:
                 items.map((item: any) => ({
-                    // Provide the exact Price ID (for example, pr_1234) of
-                    // the product you want to sell
+
 
                     price: item.product_ref,
                     quantity: item.quantity,

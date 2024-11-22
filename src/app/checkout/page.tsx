@@ -4,7 +4,7 @@ import {
     EmbeddedCheckoutProvider,
     EmbeddedCheckout
 } from '@stripe/react-stripe-js';
-import { createElement, useCallback, useEffect, useState } from 'react';
+import { createElement, useCallback, useContext, useEffect, useState } from 'react';
 
 // Make sure to call `loadStripe` outside of a component’s render to avoid
 // recreating the `Stripe` object on every render.
@@ -13,13 +13,16 @@ const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY)
 import { Button, Card, Label, TextInput, Textarea, Radio, Select } from 'flowbite-react'
 import { Calendar, CreditCard, MapPin, User, CheckCircle, Clock, ThumbsUp, DollarSign, Award, Mail, Phone, Loader2, Info } from 'lucide-react'
 import { useParams, useSearchParams } from 'next/navigation';
+import { CartContext } from '../variants/context';
+import { formatCurrency } from '../../ultilities/formator';
 
 type CheckoutStep = 'travel-details' | 'passenger-info' | 'payment' | 'review' | 'confirmation';
 
 export default function TravelCheckout() {
+    const store = useContext(CartContext);
     const searchParams = useSearchParams()
     const session_id = searchParams.get('session_id')
-    const [currentStep, setCurrentStep] = useState<CheckoutStep>('travel-details');
+    const [currentStep, setCurrentStep] = useState<CheckoutStep>('passenger-info');
 
     const steps = [
         { id: 'travel-details', label: 'Booking submitted', icon: MapPin },
@@ -137,16 +140,16 @@ export default function TravelCheckout() {
                                 <div className="space-y-6">
                                     <div className="space-y-4">
                                         <div className="text-sm text-gray-500 dark:text-gray-400">Item:</div>
-                                        <div className="flex items-start gap-3">
+                                        <div className="grid items-start gap-3">
                                             {/* <Boat className="h-5 w-5 text-blue-600 mt-0.5" /> */}
-                                            <div>
+                                            {store.cart.listItems.map((item, index) => <div key={index}>
                                                 <div className="font-medium">
-                                                    Charter boat: Phi phi island, halfday
+                                                    {item?.name}
                                                 </div>
                                                 <div className="text-blue-600 font-semibold mt-1">
-                                                    4500 THB
+                                                    {formatCurrency(item?.price, "THB")} THB
                                                 </div>
-                                            </div>
+                                            </div>)}
                                         </div>
                                     </div>
                                     <hr className="h-px my-4 bg-gray-200 border-0 dark:bg-gray-700" />
@@ -274,15 +277,14 @@ export default function TravelCheckout() {
     );
 }
 const Payment = () => {
+    const store = useContext(CartContext); // maybe from database
     const fetchClientSecret = useCallback(() => {
         // Create a Checkout Session
         const payload = {
-            "items": [
-                {
-                    "product_ref": "price_1QLlOHKPeOxP17Ebe5uJ7YtY",
-                    "quantity": 1
-                }
-            ]
+            item: store.cart.listItems.map((item) => ({
+                product_ref: item.id,
+                quantity: item.quantity
+            }))
         }
         return fetch("/api/stripe", {
             method: "POST",
@@ -296,6 +298,12 @@ const Payment = () => {
 
     return (
         <div id="checkout" className="py-4 bg-[--primary]">
+            <div className="">
+                {JSON.stringify(store.cart.listItems.map((item) => ({
+                    'product_ref': item.id,
+                    'quantity': item.quantity
+                })))}
+            </div>
             <EmbeddedCheckoutProvider
 
                 stripe={stripePromise}

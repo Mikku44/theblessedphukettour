@@ -2,6 +2,7 @@
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
+import Stripe from "stripe";
 
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -16,9 +17,10 @@ const firebaseConfig = {
   appId: process.env.NEXT_PUBLIC_appId
 };
 
+const stripe = new Stripe(process.env.NEXT_PUBLIC_secret_stripe);
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-export {app,auth,db}
+export {app,auth,db,stripe}

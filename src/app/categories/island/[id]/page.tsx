@@ -1,29 +1,41 @@
 'use client'
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import Carousel from "../../../components/carousel";
 import TimelineTrip from "../../../components/Timeline";
 import { Tab, Tabs } from "@nextui-org/tabs";
-import { ChevronDown, MapPin, Star } from "lucide-react";
-import { Button, Card } from "flowbite-react";
+import { MapPin } from "lucide-react";
+import { Button } from "flowbite-react";
 import Collapse from "../../../components/collapse";
 import Link from "next/link";
-import DraggableScroll from "../../../components/DraggableScroll";
-import PlanSelector from "../../../components/planSelector";
-import { DateRangePicker } from "@nextui-org/date-picker";
+
 import { Checkbox } from "@nextui-org/checkbox";
 import PlaceSelector from "../../../components/placeSelector";
 import { db } from "../../../api/config/config";
-import { collection, doc, getDoc } from "firebase/firestore";
+import { doc, getDoc, setDoc } from "firebase/firestore";
 import CustomerReview from "../../../components/customerReview";
 import { Calendar } from "@nextui-org/calendar";
-
+import { GetPrices } from "../../../../ultilities/stripeFunc";
+import { formatCurrency } from "../../../../ultilities/formator";
+import { CartContext } from "../../../variants/context";
+import { v4 } from "uuid";
 export default function Page({ params }: { params: { id: string } }) {
-
+    const store = useContext(CartContext);
     const [currentTab, setCurrentTap] = useState("");
     const [shuttleOn, setShuttleOn] = useState(false);
 
     const [data, setData] = useState<any>();
     const [lang, setLang] = useState("en");
+    const [plans, setPlans] = useState([]);
+    const [bookingDate, setBookingDate] = useState('');
+
+    const [state, setState] = useState(
+        {
+            quantity: [],
+            prices: [],
+            totalPrice: 0
+
+        }
+    );
 
     async function GetData() {
         const docRef = doc(db, "islands", params?.id);
@@ -40,12 +52,34 @@ export default function Page({ params }: { params: { id: string } }) {
 
     }
 
+
+
     useEffect(() => {
-        console.log("DATA  : ", data)
+        if (data)
+            console.log("DATA  : ", data)
     }, [data]);
+
+
+    useEffect(() => {
+        setState((prev) => ({
+            ...prev,
+            totalPrice: prev.quantity.reduce(
+                (total, qty, index) => total + qty * (prev.prices[index] || 0),
+                0
+            ),
+        }));
+    }, [state.quantity]);
 
     useEffect(() => {
         GetData();
+        GetPrices('prod_RBdKHJOiWZ9SRi').then((result) => {
+            setPlans(result?.data);
+            setState((prevState) => ({
+                ...prevState,
+                quantity: result?.data.map(() => 0),
+                prices: result?.data.map((item) => item?.unit_amount),
+            }));
+        })
     }, []);
     return (
 
@@ -58,12 +92,12 @@ export default function Page({ params }: { params: { id: string } }) {
                         </div>)
                         :
                         [
-                            <div className="bg-black h-full text-white flex justify-center items-center">PIC 1</div>,
-                            <div className="bg-black h-full text-white flex justify-center items-center">PIC 2 </div>
+                            <div key={1} className="bg-black h-full text-white flex justify-center items-center">PIC 1</div>,
+                            <div key={2} className="bg-black h-full text-white flex justify-center items-center">PIC 2 </div>
 
                         ]} className="m-4" />
                 <div className="px-10 py-10">
-                    <div className="text-[56px] font-bold">{data?.place_name || "Island Name"}</div>
+                    <div className="lg:text-[42px] md:text-[32px] text-[32px] font-bold">{data?.place_name || "Island Name"}</div>
                     <div className="flex  gap-2 font-semibold"><MapPin />Location :  {data?.province || "Phuket"} , Thailand</div>
                     <div className="flex flex-wrap gap-4 py-5">
                         <Tabs
@@ -97,21 +131,31 @@ export default function Page({ params }: { params: { id: string } }) {
             </section>
 
 
-            <section className="lg:w-[30%] flex justify-center py-5">
+            <section className="lg:w-[30%] flex justify-center py-5 w-[80vw]">
                 <div className="border rounded-[20px] p-4 flex flex-col gap-10 sticky top-20 shadow-lg w-full min-h-fit h-[400px]">
                     <div className="grid gap-2">
                         {/* {data && <PlanSelector data={data?.ticket_price} />
                         } */}
-                        {[1, 2].map((item, index) => {
+                        {plans.map((item, index) => {
                             return <div key={index} className="rounded-md border-2 p-2 px-4 flex justify-between">
                                 <div className="">
-                                    <div className="text-lg">Child</div>
-                                    <div className="text-sm">100 THB</div>
+                                    <div className="text-lg">{item?.nickname || `Program ${index + 1}`}</div>
+                                    <div className="text-sm">{formatCurrency(item?.unit_amount, "THB")} THB</div>
                                 </div>
                                 <div className="flex gap-2 items-center">
-                                    <Button className="bg-[--primary]" >-</Button>
-                                    <div className="px-2">0</div>
-                                    <Button className="bg-[--primary]" >+</Button>
+                                    <Button onClick={() => setState((prev) => ({
+                                        ...prev,
+                                        quantity: prev.quantity.map((item, i) =>
+                                            i === index && item > 0 ? item - 1 : item
+                                        ),
+                                    }))} className="bg-[--primary]" >-</Button>
+                                    <div className="px-2">{state?.quantity[index]}</div>
+                                    <Button onClick={() => setState((prev) => ({
+                                        ...prev,
+                                        quantity: prev.quantity.map((item, i) =>
+                                            (i === index) ? item + 1 : item
+                                        ),
+                                    }))} className="bg-[--primary]" >+</Button>
                                 </div>
                             </div>
                         })}
@@ -123,7 +167,7 @@ export default function Page({ params }: { params: { id: string } }) {
                     /> */}
                     <div className="w-full flex justify-center">
                         <Calendar
-                            onChange={(e) => alert(JSON.stringify(e))
+                            onChange={(e) => setBookingDate(e.toDate.toString())
                             }
                             className=""
                             aria-label="Please enter your stay duration"
@@ -132,20 +176,68 @@ export default function Page({ params }: { params: { id: string } }) {
                     </div>
                     <Checkbox checked={shuttleOn} onChange={e => setShuttleOn(e.currentTarget.checked)} radius="full">Need a shuttle</Checkbox>
                     {shuttleOn && <PlaceSelector />}
-                    
+
 
                     <div className="flex justify-between">
                         <div className="text-sm">Total Price : </div>
-                        <div className="text-lg font-bold">฿ 1,500</div>
+                        <div className="text-lg font-bold">{formatCurrency(state?.totalPrice, "THB")}</div>
                     </div>
                     <div className="grid grid-cols-2 gap-2">
                         <div>
-                            <Button className="bg-[--primary] hover:bg-[--primart-50] text-white w-full mt-4 py-2 rounded-lg font-semibold">
+                            <Button onClick={() => {
+                                store.setCart((prev) => {
+                                    const newItems =
+                                        state.quantity.map((item, index) => ({
+                                            name: `${data?.place_name} (${plans[index].nickname || index})`,
+                                            quantity: item,
+                                            image: data?.image_url?.[lang]?.[0] || '',
+                                            price: state.prices[index] * state.quantity[index],
+                                            id:plans[index].id 
+                                        }))
+                                        ;
+                                    console.log([...prev.listItems, ...newItems])
+                                    return ({
+                                        listItems: [...prev.listItems, ...newItems]
+                                    })
+                                })
+                            }} className="bg-[--primary] hover:bg-[--primart-50] text-white w-full mt-4 py-2 rounded-lg font-semibold">
                                 Add to Cart
                             </Button>
                         </div>
                         <Link href={`/checkout`}>
-                            <Button className="bg-[--secondary] hover:bg-[--secondary-50] text-white w-full mt-4 py-2 rounded-lg font-semibold">
+                            <Button onClick={ async() => {
+                                store.setCart((prev) => {
+                                    const newItems =
+                                        state.quantity.map((item, index) => ({
+                                            name: data?.place_name + plans[index].nickname,
+                                            quantity: item,
+                                            image: data?.image_url?.[lang]?.[0] || '',
+                                            price: state.prices[index] * state.quantity[index],
+                                            id:plans[index].id
+                                        }))
+                                        ;
+                                    console.log([...prev.listItems, ...newItems])
+                                    return ({
+                                        listItems: [...prev.listItems, ...newItems]
+                                    })
+                                })
+
+                                await setDoc(doc(db, "Bookings", v4()), {
+                                    uid:"user_id",
+                                    created_at: new Date().toISOString(),
+                                    status:"waiting",
+                                    total_price:1000,
+                                    items:[{
+                                        ref_id:"ref_id",
+                                        type:"island",
+                                        quantity:1,
+                                        price:1000,
+                                        pick_up_place:'',
+                                        datetime:'2024-11-25T23:00:30Z'
+                                    }]
+
+                                  });
+                            }} className="bg-[--secondary] hover:bg-[--secondary-50] text-white w-full mt-4 py-2 rounded-lg font-semibold">
                                 BOOK NOW
                             </Button>
                         </Link>
@@ -155,11 +247,11 @@ export default function Page({ params }: { params: { id: string } }) {
             </section>
 
 
-            <section className="w-[90vw] mx-auto">
-                <div className="text-xl px-10 pb-10">Reviews from customers</div>
+            <section className="w-[90vw] mx-auto mt-10">
+                <div className="text-[42px] font-bold px-10 pb-10">Reviews from customers</div>
 
 
-                <div className="grid lg:grid-cols-3 gap-2">{[1, 2, 3, 4, 5, 6, 7, 8].map((item, key) => <CustomerReview />,)}</div>
+                <div className="grid lg:grid-cols-3 gap-2">{[1, 2, 3, 4, 5, 6, 7, 8].map((item, key) => <CustomerReview key={key} />,)}</div>
             </section>
         </div>
 

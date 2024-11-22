@@ -5,40 +5,43 @@ import Navigation from "./components/Navbar";
 import { NextIntlClientProvider } from 'next-intl';
 import { getLocale, getMessages } from 'next-intl/server';
 
-import { Inter,Chakra_Petch,Noto_Kufi_Arabic ,Montserrat} from 'next/font/google'
+import { Inter, Chakra_Petch, Noto_Kufi_Arabic, Montserrat } from 'next/font/google'
 import Footer from "./components/Footer";
 import FloatingChat from "./components/FloatingChat";
 import Head from 'next/head';
+import { CartProvider } from "./components/cartContext";
+
+
 
 
 const fluttericon = localFont({
   src: './fonts/MyFlutterApp.ttf',
   display: 'swap',
-  variable:"--icon"
+  variable: "--icon"
 })
 
-const inter =  Inter({
-  subsets: ['latin'] ,
-  display:"swap",
-  variable:"--font-inter"
+const inter = Inter({
+  subsets: ['latin'],
+  display: "swap",
+  variable: "--font-inter"
 })
 
-const chakra =  Inter({
-  subsets: ['latin'] ,
-  display:"swap",
-  variable:"--font-Chakra-Petch"
+const chakra = Inter({
+  subsets: ['latin'],
+  display: "swap",
+  variable: "--font-Chakra-Petch"
 })
 
-const noto =  Noto_Kufi_Arabic({
-  subsets: ['latin'] ,
-  display:"swap",
-  variable:"--font-noto"
+const noto = Noto_Kufi_Arabic({
+  subsets: ['latin'],
+  display: "swap",
+  variable: "--font-noto"
 })
 
 const montserrat = Montserrat({
-  subsets: ['latin'] ,
-  display:"swap",
-  variable:"--font-montserrat"
+  subsets: ['latin'],
+  display: "swap",
+  variable: "--font-montserrat"
 })
 
 export const metadata: Metadata = {
@@ -54,26 +57,26 @@ export default async function RootLayout({
 }>) {
 
   const locale = await getLocale();
-
   // Providing all messages to the client
   // side is the easiest way to get started
   const messages = await getMessages();
 
   return (
     <html lang={locale}>
-        <Head>
+      <Head>
         <meta name="agd-partner-manual-verification" content="" />
       </Head>
       <body
         className={`${montserrat.className} ${montserrat.variable} ${noto.className} ${inter.className} ${chakra.className} ${fluttericon.variable} antialiased`}
       >
-        <NextIntlClientProvider messages={messages}>
-
-          <Navigation />
-          {children}
-          <FloatingChat />
-          <Footer />
-        </NextIntlClientProvider>
+        <CartProvider >
+          <NextIntlClientProvider messages={messages}>
+            <Navigation />
+            {children}
+            <FloatingChat />
+            <Footer />
+          </NextIntlClientProvider>
+        </CartProvider >
       </body>
     </html>
   );
