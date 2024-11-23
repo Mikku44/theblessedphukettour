@@ -44,7 +44,7 @@ export default function Home() {
         <div className="absolute top-0 left-0 z-0  w-full h-[80vh] overflow-hidden show_bg_2">
           <div className="h-full  grid items-center">
             <div className="px-10">
-              <div className="text-[16px] text-[--primary]">{t('The Blessed Trip Manager')}</div>
+              <div className="text-[16px] text-[--primary]">{t('Jalanista Trip Manager')}</div>
               <div className="text-[42px] font-bold">{t('Hello')},</div>
               <div className="text-[42px]">{t('Where do you wanna go?')}</div>
               <div className="text-[16px] text-white w-fit px-5 py-2 flex gap-2 items-center rounded-full bg-[--primary] "><MapPin />  {t('THAILAND')} , {t('Phuket')}</div>

@@ -18,8 +18,11 @@ import { GetPrices } from "../../../../ultilities/stripeFunc";
 import { formatCurrency } from "../../../../ultilities/formator";
 import { CartContext } from "../../../variants/context";
 import { v4 } from "uuid";
+import { usePathname } from "next/navigation";
 export default function Page({ params }: { params: { id: string } }) {
     const store = useContext(CartContext);
+    const pathname = usePathname();
+    const user = JSON.parse(localStorage.getItem('user'))
     const [currentTab, setCurrentTap] = useState("");
     const [shuttleOn, setShuttleOn] = useState(false);
 
@@ -71,15 +74,17 @@ export default function Page({ params }: { params: { id: string } }) {
     }, [state.quantity]);
 
     useEffect(() => {
-        GetData();
-        GetPrices('prod_RBdKHJOiWZ9SRi').then((result) => {
-            setPlans(result?.data);
-            setState((prevState) => ({
-                ...prevState,
-                quantity: result?.data.map(() => 0),
-                prices: result?.data.map((item) => item?.unit_amount),
-            }));
-        })
+        if (params) {
+            GetData();
+            GetPrices('prod_RBdKHJOiWZ9SRi').then((result) => {
+                setPlans(result?.data);
+                setState((prevState) => ({
+                    ...prevState,
+                    quantity: result?.data.map(() => 0),
+                    prices: result?.data.map((item) => item?.unit_amount),
+                }));
+            })
+        }
     }, []);
     return (
 
@@ -192,7 +197,7 @@ export default function Page({ params }: { params: { id: string } }) {
                                             quantity: item,
                                             image: data?.image_url?.[lang]?.[0] || '',
                                             price: state.prices[index] * state.quantity[index],
-                                            id:plans[index].id 
+                                            id: plans[index].id
                                         }))
                                         ;
                                     console.log([...prev.listItems, ...newItems])
@@ -205,7 +210,8 @@ export default function Page({ params }: { params: { id: string } }) {
                             </Button>
                         </div>
                         <Link href={`/checkout`}>
-                            <Button onClick={ async() => {
+                            <Button onClick={async () => {
+                                if(!user) window.location.href = `/login?from=${pathname}`
                                 store.setCart((prev) => {
                                     const newItems =
                                         state.quantity.map((item, index) => ({
@@ -213,7 +219,7 @@ export default function Page({ params }: { params: { id: string } }) {
                                             quantity: item,
                                             image: data?.image_url?.[lang]?.[0] || '',
                                             price: state.prices[index] * state.quantity[index],
-                                            id:plans[index].id
+                                            id: plans[index].id
                                         }))
                                         ;
                                     console.log([...prev.listItems, ...newItems])
@@ -223,20 +229,20 @@ export default function Page({ params }: { params: { id: string } }) {
                                 })
 
                                 await setDoc(doc(db, "Bookings", v4()), {
-                                    uid:"user_id",
+                                    uid: "user_id",
                                     created_at: new Date().toISOString(),
-                                    status:"waiting",
-                                    total_price:1000,
-                                    items:[{
-                                        ref_id:"ref_id",
-                                        type:"island",
-                                        quantity:1,
-                                        price:1000,
-                                        pick_up_place:'',
-                                        datetime:'2024-11-25T23:00:30Z'
+                                    status: "waiting",
+                                    total_price: 1000,
+                                    items: [{
+                                        ref_id: "ref_id",
+                                        type: "island",
+                                        quantity: 1,
+                                        price: 1000,
+                                        pick_up_place: '',
+                                        datetime: '2024-11-25T23:00:30Z'
                                     }]
 
-                                  });
+                                });
                             }} className="bg-[--secondary] hover:bg-[--secondary-50] text-white w-full mt-4 py-2 rounded-lg font-semibold">
                                 BOOK NOW
                             </Button>

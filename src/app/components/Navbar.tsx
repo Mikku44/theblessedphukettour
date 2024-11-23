@@ -10,11 +10,13 @@ import { ChevronDown, Minus, Plus, ShoppingBag, Variable, X } from "lucide-react
 import Link from "next/link";
 import { useContext, useEffect, useState } from "react";
 import { CartContext } from "../variants/context";
+import { usePathname } from "next/navigation";
 
 
 
 export default function Navigation() {
     const store = useContext(CartContext);
+    const pathName = usePathname();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [showCart, setShowCart] = useState(false);
     const [user, setUser] = useState<any>();
@@ -34,7 +36,7 @@ export default function Navigation() {
 
     useEffect(() => {
         getUserInfo();
-
+        console.log("PATH NAME : ", pathName)
     }, []);
 
     const categories = [
@@ -200,7 +202,7 @@ export default function Navigation() {
                     {!user ?
                         <>
                             <NavbarItem className="hidden lg:flex" >
-                                <Button as={Link} href="/login" className="text-white" variant="light">
+                                <Button as={Link} href={`/login?from=${pathName}`} className="text-white" variant="light">
                                     Login
                                 </Button>
                             </NavbarItem>
@@ -223,7 +225,7 @@ export default function Navigation() {
                                         {store.cart.listItems.map((item, index) => <div key={index} className="flex justify-between items-center mb-2">
                                             <div className="flex gap-3 items-center">
                                                 <div className="rounded-lg size-20 overflow-hidden">
-                                                    <img className="h-full object-cover" src={item?.image || "https://images.unsplash.com/photo-1731570225640-7ddad4231679?q=80&w=1887&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"} alt="" />
+                                                    <img className="h-full object-cover" src={item?.image || item?.photoURL || "https://images.unsplash.com/photo-1731570225640-7ddad4231679?q=80&w=1887&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"} alt="" />
                                                 </div>
                                                 <div className="grid">
                                                     <div className="text-xl font-semibold">{item?.name}</div>
@@ -241,7 +243,7 @@ export default function Navigation() {
                                             </div>
                                         </>}
 
-                                        <Button href="/checkout" className="w-full h-[50px] text-white bg-[--primary] hover:bg-[--primary-50] duration-150">Checkout</Button>
+                                    <Button href="/checkout" className="w-full h-[50px] text-white bg-[--primary] hover:bg-[--primary-50] duration-150">Checkout</Button>
                                 </div>
                                 {/* <Dropdown>
                                     <DropdownTrigger>
@@ -288,7 +290,7 @@ export default function Navigation() {
                                 <Dropdown>
                                     <DropdownTrigger>
                                         <Button isIconOnly={true} radius="full" className="text-white" variant="light">
-                                            <Avatar img={user?.image} className="rounded-full overflow-hidden"></Avatar>
+                                            <Avatar img={user?.image || user?.photoURL} className="rounded-full overflow-hidden"></Avatar>
                                         </Button>
                                     </DropdownTrigger>
                                     <DropdownMenu>
@@ -300,6 +302,7 @@ export default function Navigation() {
                                         </DropdownItem>
                                         <DropdownItem onClick={() => {
                                             localStorage.removeItem("user")
+                                            window.location.reload();
                                         }} className="bg-red-500 hover:bg-red-800 w-full text-white text-center" >
                                             Log out
                                         </DropdownItem>

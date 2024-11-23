@@ -1,24 +1,34 @@
 'use client'
-import { getRedirectResult, GoogleAuthProvider, signInWithEmailAndPassword, signInWithRedirect } from "firebase/auth";
+import { getRedirectResult, GoogleAuthProvider, signInWithEmailAndPassword, signInWithPopup, signInWithRedirect } from "firebase/auth";
 import { useEffect, useState } from "react";
 import { auth } from "../api/config/config";
 import { Button } from "@nextui-org/button";
+import { useSearchParams } from "next/navigation";
+
+
 
 export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
 
-
+  const params = useSearchParams();
+  const prevPath = params.get('from');
   const loginWithGoogle = async () => {
-    console.log("CLICKED")
+    console.log("CLICKED");
     try {
       const provider = new GoogleAuthProvider();
 
-      // Redirects the user to Google's login page
-      await signInWithRedirect(auth, provider);
-      alert("SIGN IN COMPLETE")
-      // After redirecting back, process the result
+      // Opens a popup for Google login
+      const result = await signInWithPopup(auth, provider);
+
+      // User signed in successfully
+      const user = result.user;
+      console.log("User Info:", user);
+      if (user) {
+        localStorage.setItem("user", JSON.stringify(user))
+        window.location.href = (prevPath || "/");
+      }
 
     } catch (error) {
       console.error("Login failed", error);
@@ -27,6 +37,7 @@ export default function Login() {
       alert("Something went wrong");
     }
   };
+
 
   const isAuthenticated = async () => {
     const result = await getRedirectResult(auth);
@@ -67,6 +78,7 @@ export default function Login() {
     if (data.user) {
       const user = data.user
       localStorage.setItem("user", JSON.stringify(user))
+      window.location.href = (prevPath || "/");
     }
     // signInWithEmailAndPassword(auth, email, password)
     //   .then((userCredential) => {
