@@ -11,6 +11,7 @@ import { db } from "../../api/config/config";
 import { collection, doc, getDocs, setDoc } from "firebase/firestore";
 import { Button } from "@nextui-org/button";
 import { Dropdown, DropdownItem, DropdownTrigger, DropdownMenu } from "@nextui-org/dropdown";
+import SkeletonCard from "../../components/skeletonCart";
 
 export default function Page() {
     const t = useTranslations();
@@ -109,8 +110,10 @@ export default function Page() {
 function Islands() {
     const [data, setData] = useState<any>([]);
     const [lang, setLang] = useState("en");
+    const [isLoading, setIsLoading] = useState(true);
 
     async function GetData() {
+        setIsLoading(true);
         const docRef = collection(db, "islands");
         const docSnap = await getDocs(docRef);
         if (!docSnap.empty) {
@@ -118,7 +121,9 @@ function Islands() {
 
                 const docData = { id: doc.id, ...doc.data() };
                 setData((prev: any) => [docData, ...prev])
+                
             });
+            setIsLoading(false)
         } else {
             console.log("No such document!");
         }
@@ -133,6 +138,9 @@ function Islands() {
     }, []);
     return <>
         <div className="grid lg:grid-cols-2 md:grid-cols-1  gap-2  lg:w-[1215px] md:w-full py-5 px-5">
+            {isLoading && [1,2,3,4,5,6].map(()=>{
+               return  <SkeletonCard/>
+            })}
             {data.length > 0 && data.map((item: any, index: number) => {
 
                 return <a key={index} href={`/categories/island/${item?.id}`} className="rounded-xl w-full h-auto p-4 border-2 bg-white flex flex-col justify-between">
