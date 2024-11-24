@@ -3,7 +3,7 @@ import { useContext, useEffect, useState } from "react";
 import Carousel from "../../../components/carousel";
 import TimelineTrip from "../../../components/Timeline";
 import { Tab, Tabs } from "@nextui-org/tabs";
-import { MapPin } from "lucide-react";
+import { Loader, MapPin } from "lucide-react";
 import { Button } from "flowbite-react";
 import Collapse from "../../../components/collapse";
 import Link from "next/link";
@@ -16,13 +16,13 @@ import CustomerReview from "../../../components/customerReview";
 import { Calendar } from "@nextui-org/calendar";
 import { GetPrices } from "../../../../ultilities/stripeFunc";
 import { formatCurrency } from "../../../../ultilities/formator";
-import { CartContext } from "../../../variants/context";
 import { v4 } from "uuid";
 import { usePathname } from "next/navigation";
+import { CartContext } from "../../../components/cartContext";
 export default function Page({ params }: { params: { id: string } }) {
-    const store = useContext(CartContext);
+    const cart = useContext(CartContext);
     const pathname = usePathname();
-    const user = JSON.parse(localStorage.getItem('user'))
+
     const [currentTab, setCurrentTap] = useState("");
     const [shuttleOn, setShuttleOn] = useState(false);
 
@@ -30,11 +30,14 @@ export default function Page({ params }: { params: { id: string } }) {
     const [lang, setLang] = useState("en");
     const [plans, setPlans] = useState([]);
     const [bookingDate, setBookingDate] = useState('');
+    const [user, setUser] = useState<any>({});
 
     const [state, setState] = useState(
         {
             quantity: [],
             prices: [],
+            pick_up_place: '',
+            datetime: '',
             totalPrice: 0
 
         }
@@ -85,6 +88,7 @@ export default function Page({ params }: { params: { id: string } }) {
                 }));
             })
         }
+        setUser(JSON.parse(localStorage.getItem('user')))
     }, []);
     return (
 
@@ -97,8 +101,7 @@ export default function Page({ params }: { params: { id: string } }) {
                         </div>)
                         :
                         [
-                            <div key={1} className="bg-black h-full text-white flex justify-center items-center">PIC 1</div>,
-                            <div key={2} className="bg-black h-full text-white flex justify-center items-center">PIC 2 </div>
+                            <div key={1} className="bg-black h-full text-white flex justify-center items-center"><Loader className=" animate-spin" /></div>,
 
                         ]} className="m-4" />
                 <div className="px-10 py-10">
@@ -172,15 +175,28 @@ export default function Page({ params }: { params: { id: string } }) {
                     /> */}
                     <div className="w-full flex justify-center">
                         <Calendar
-                            onChange={(e) => setBookingDate(e.toDate.toString())
-                            }
+                            onChange={(e: any) => {
+                                const selectedDate = e?.toDate?.(); // Safely access `toDate` method if it exists
+                                if (selectedDate) {
+                                    console.log(`DATE  :${selectedDate.toISOString()}`);
+                                    setBookingDate(`${selectedDate.toISOString()}`)
+                                } else {
+                                    console.warn("No valid date found in MappedDateValue:", e);
+                                }
+                            }}
                             className=""
                             aria-label="Please enter your stay duration"
                             showMonthAndYearPickers
                         />
                     </div>
                     <Checkbox checked={shuttleOn} onChange={e => setShuttleOn(e.currentTarget.checked)} radius="full">Need a shuttle</Checkbox>
-                    {shuttleOn && <PlaceSelector />}
+                    {shuttleOn && <PlaceSelector onChange={(place) => {
+                        setState((prevState) => ({
+                            ...prevState, // Spread the existing state to preserve other properties
+                            pick_up_place: place, // Update the `pick_up_place` key
+                        }));
+                    }}
+                    />}
 
 
                     <div className="flex justify-between">
@@ -190,59 +206,82 @@ export default function Page({ params }: { params: { id: string } }) {
                     <div className="grid grid-cols-2 gap-2">
                         <div>
                             <Button onClick={() => {
-                                store.setCart((prev) => {
-                                    const newItems =
-                                        state.quantity.map((item, index) => ({
-                                            name: `${data?.place_name} (${plans[index].nickname || index})`,
-                                            quantity: item,
-                                            image: data?.image_url?.[lang]?.[0] || '',
-                                            price: state.prices[index] * state.quantity[index],
-                                            id: plans[index].id
-                                        }))
-                                        ;
-                                    console.log([...prev.listItems, ...newItems])
-                                    return ({
-                                        listItems: [...prev.listItems, ...newItems]
-                                    })
-                                })
+                                const products = state.quantity.map((item, index) => ({
+                                    id: plans[index].id,
+                                    quantity: item,
+                                    type: 'island',
+                                    pick_up_place: 'pick_up_place',
+                                    datetime: '2024-11-25T23:00:30Z'
+                                }));
+
+
+
+
+                                products.map((product) => cart.addOneToCart(product.id, product.quantity));
+                                // store.setCart((prev) => {
+                                //     const newItems =
+                                //         state.quantity.map((item, index) => ({
+                                //             name: `${data?.place_name} (${plans[index].nickname || index})`,
+                                //             quantity: item,
+                                //             image: data?.image_url?.[lang]?.[0] || '',
+                                //             price: state.prices[index] * state.quantity[index],
+                                //             id: plans[index].id
+                                //         }))
+                                //         ;
+                                //     console.log([...prev.listItems, ...newItems])
+                                //     return ({
+                                //         listItems: [...prev.listItems, ...newItems]
+                                //     })
+                                // })
                             }} className="bg-[--primary] hover:bg-[--primart-50] text-white w-full mt-4 py-2 rounded-lg font-semibold">
                                 Add to Cart
                             </Button>
                         </div>
                         <Link href={`/checkout`}>
                             <Button onClick={async () => {
-                                if(!user) window.location.href = `/login?from=${pathname}`
-                                store.setCart((prev) => {
-                                    const newItems =
-                                        state.quantity.map((item, index) => ({
-                                            name: data?.place_name + plans[index].nickname,
-                                            quantity: item,
-                                            image: data?.image_url?.[lang]?.[0] || '',
-                                            price: state.prices[index] * state.quantity[index],
-                                            id: plans[index].id
-                                        }))
-                                        ;
-                                    console.log([...prev.listItems, ...newItems])
-                                    return ({
-                                        listItems: [...prev.listItems, ...newItems]
-                                    })
-                                })
+                                if (!user) window.location.href = `/login?from=${pathname}`
 
-                                await setDoc(doc(db, "Bookings", v4()), {
-                                    uid: "user_id",
-                                    created_at: new Date().toISOString(),
-                                    status: "waiting",
-                                    total_price: 1000,
-                                    items: [{
-                                        ref_id: "ref_id",
-                                        type: "island",
-                                        quantity: 1,
-                                        price: 1000,
-                                        pick_up_place: '',
-                                        datetime: '2024-11-25T23:00:30Z'
-                                    }]
+                                const products = state.quantity.map((item, index) => ({
+                                    id: plans[index].id,
+                                    quantity: item,
+                                    type: 'island',
+                                    pick_up_place: state?.pick_up_place,
+                                    datetime: bookingDate
+                                }));
+                                // return alert(JSON.stringify(products))
 
+
+                                products.map(async (product) => {
+                                    // cart.addOneToCart(product.id, product.quantity)
+                                    await setDoc(doc(db, "Bookings", v4()), {
+                                        uid: user.uid,
+                                        created_at: new Date().toISOString(),
+                                        ref_id: product?.id,
+                                        type: product?.type,
+                                        quantity: product?.quantity,
+                                        status: "waiting",
+                                        pick_up_place: product?.pick_up_place,
+                                        datetime: product?.datetime
+
+                                    });
                                 });
+                                // store.setCart((prev) => {
+                                //     const newItems =
+                                //         state.quantity.map((item, index) => ({
+                                //             name: data?.place_name + plans[index].nickname,
+                                //             quantity: item,
+                                //             image: data?.image_url?.[lang]?.[0] || '',
+                                //             price: state.prices[index] * state.quantity[index],
+                                //             id: plans[index].id
+                                //         }))
+                                //         ;
+                                //     console.log([...prev.listItems, ...newItems])
+                                //     return ({
+                                //         listItems: [...prev.listItems, ...newItems]
+                                //     })
+                                // })
+
+
                             }} className="bg-[--secondary] hover:bg-[--secondary-50] text-white w-full mt-4 py-2 rounded-lg font-semibold">
                                 BOOK NOW
                             </Button>
@@ -290,12 +329,12 @@ function Info({ data }) {
                 {data?.visit_point || "Visit Point info"}
             </div>
         </div>
-        <div className="py-3">
+        {/* <div className="py-3">
             <div className="text-[--primary] font-bold text-2xl py-2">Reference Page :</div>
             <div className="text-zinc-800">
                 {data?.reference_page || "Ref page"}
             </div>
-        </div>
+        </div> */}
         <div className="py-3">
             <div className="text-[--primary] font-bold text-2xl py-2">Travel Via :</div>
             <div className="text-zinc-800">

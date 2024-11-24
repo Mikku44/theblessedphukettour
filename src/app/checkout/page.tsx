@@ -11,18 +11,22 @@ import { createElement, useCallback, useContext, useEffect, useState } from 'rea
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY);
 
 import { Button, Card, Label, TextInput, Textarea, Radio, Select } from 'flowbite-react'
-import { Calendar, CreditCard, MapPin, User, CheckCircle, Clock, ThumbsUp, DollarSign, Award, Mail, Phone, Loader2, Info } from 'lucide-react'
+import { Calendar, CreditCard, MapPin, User, CheckCircle, Clock, ThumbsUp, DollarSign, Award, Mail, Phone, Loader2, Info, XCircle } from 'lucide-react'
 import { useParams, useSearchParams } from 'next/navigation';
-import { CartContext } from '../variants/context';
 import { formatCurrency } from '../../ultilities/formator';
+import { CartContext } from '../components/cartContext';
+import { collection, getDocs, onSnapshot, query, where } from 'firebase/firestore';
+import { db } from '../api/config/config';
+import CartProduct from '../components/cartProduct';
 
 type CheckoutStep = 'travel-details' | 'passenger-info' | 'payment' | 'review' | 'confirmation';
 
 export default function TravelCheckout() {
-    const store = useContext(CartContext);
+    const cart = useContext(CartContext);
     const searchParams = useSearchParams()
     const session_id = searchParams.get('session_id')
     const [currentStep, setCurrentStep] = useState<CheckoutStep>('passenger-info');
+    const [bookings, setBookings] = useState<any>();
 
     const steps = [
         { id: 'travel-details', label: 'Booking submitted', icon: MapPin },
@@ -69,6 +73,26 @@ export default function TravelCheckout() {
         return () => clearInterval(interval); // Cleanup on component unmount
     }, []);
 
+    const statusConfig = {
+        waiting: {
+          color: "bg-yellow-100 text-yellow-800 border-yellow-200 dark:bg-yellow-900 dark:text-yellow-300 dark:border-yellow-700",
+          icon: Clock,
+          label: "Waiting"
+        },
+        approved: {
+          color: "bg-green-100 text-green-800 border-green-200 dark:bg-green-900 dark:text-green-300 dark:border-green-700",
+          icon: CheckCircle,
+          label: "Approved"
+        },
+        rejected: {
+          color: "bg-red-100 text-red-800 border-red-200 dark:bg-red-900 dark:text-red-300 dark:border-red-700",
+          icon: XCircle,
+          label: "Rejected"
+        }
+      }
+
+
+
     // Format time as mm:ss
     const formatTime = (seconds) => {
         const minutes = Math.floor(seconds / 60);
@@ -77,6 +101,42 @@ export default function TravelCheckout() {
             .toString()
             .padStart(2, "0")}`;
     };
+
+    const fetchBookingData = async () => {
+        const userJSON = localStorage.getItem('user');
+        const user = JSON.parse(userJSON);
+        const q = query(collection(db, "Bookings"), where("uid", "==", user.uid));
+
+        const querySnapshot = await getDocs(q);
+        const results: any[] = [];
+        querySnapshot.forEach((doc: any) => {
+            results.push({ id: doc.id, ...doc.data() });
+        });
+        console.log("DATA")
+
+
+        // 
+        const unsubscribe = onSnapshot(q, (snapshot) => {
+            snapshot.docChanges().forEach((change) => {
+              if (change.type === "added") {
+                  console.log("New city: ", change.doc.data());
+              }
+              if (change.type === "modified") {
+                  console.log("Modified city: ", change.doc.data());
+              }
+              if (change.type === "removed") {
+                  console.log("Removed city: ", change.doc.data());
+              }
+            });
+          });
+        // 
+
+        setBookings(results|| [])
+        return
+    }
+    useEffect(() => {
+        fetchBookingData();
+    }, []);
 
     return (
         <div className="container w-[70vw] mx-auto p-4 mt-5">
@@ -131,7 +191,7 @@ export default function TravelCheckout() {
 
                 {currentStep === 'passenger-info' && (
                     <div className="w-full max-w-4xl mx-auto p-4">
-                        <Card>
+                        <div>
                             <h5 className="text-lg font-medium text-gray-900 dark:text-white bg-gray-50 dark:bg-gray-700 p-4 rounded-t-lg">
                                 Booking detail
                             </h5>
@@ -142,14 +202,13 @@ export default function TravelCheckout() {
                                         <div className="text-sm text-gray-500 dark:text-gray-400">Item:</div>
                                         <div className="grid items-start gap-3">
                                             {/* <Boat className="h-5 w-5 text-blue-600 mt-0.5" /> */}
-                                            {store.cart.listItems.map((item, index) => <div key={index}>
-                                                <div className="font-medium">
-                                                    {item?.name}
-                                                </div>
-                                                <div className="text-blue-600 font-semibold mt-1">
-                                                    {formatCurrency(item?.price, "THB")} THB
-                                                </div>
-                                            </div>)}
+                                            {bookings?.map((item, index) => 
+                                            <>
+                                            <div className={`${statusConfig[item?.status].color} w-fit px-2 py-1 rounded-full`}>{statusConfig[item?.status].label}</div>
+                                            
+                                            <CartProduct key={index} id={item?.ref_id} quantity={item?.quantity}/>
+                                            </>
+                                            )}
                                         </div>
                                     </div>
                                     <hr className="h-px my-4 bg-gray-200 border-0 dark:bg-gray-700" />
@@ -181,7 +240,7 @@ export default function TravelCheckout() {
                                     <div className="flex items-center gap-2 text-blue-600">
                                         <Loader2 className="h-5 w-5 animate-spin" />
                                         <div className="font-medium">
-                                            We are processing and checking your booking
+                                            We are checking your booking service.
                                         </div>
                                     </div>
                                     <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
@@ -190,7 +249,7 @@ export default function TravelCheckout() {
                                     </div>
                                 </div>
                             </div>
-                        </Card>
+                        </div>
                     </div>
                 )}
 
@@ -277,40 +336,92 @@ export default function TravelCheckout() {
     );
 }
 const Payment = () => {
-    const store = useContext(CartContext); // maybe from database
-    const fetchClientSecret = useCallback(() => {
-        // Create a Checkout Session
-        const payload = {
-            item: store.cart.listItems.map((item) => ({
-                product_ref: item.id,
-                quantity: item.quantity
-            }))
+    const [bookings, setBookings] = useState<any[] | null>(null); // Use `null` for "not yet loaded"
+    const [clientSecret, setClientSecret] = useState<string | null>(null);
+
+    // Fetch booking data from Firestore
+    const fetchBookingData = async () => {
+        try {
+            const userJSON = localStorage.getItem('user');
+            if (!userJSON) throw new Error("User not found in localStorage");
+
+            const user = JSON.parse(userJSON);
+            const q = query(collection(db, "Bookings"), where("uid", "==", user.uid));
+            const querySnapshot = await getDocs(q);
+
+            const results = querySnapshot.docs.map((doc) => ({
+                id: doc.id,
+                ...doc.data()
+            }));
+
+            setBookings(results);
+        } catch (error) {
+            console.error("Error fetching bookings:", error);
+            setBookings([]); // Fallback to empty bookings on error
         }
-        return fetch("/api/stripe", {
-            method: "POST",
-            body: JSON.stringify(payload)
-        })
-            .then((res) => res.json())
-            .then((data) => data.clientSecret);
+    };
+
+    // Fetch client secret for Stripe
+    const fetchClientSecret = useCallback(async () => {
+        if (!bookings || bookings.length === 0) return;
+
+        try {
+            const payload = {
+                items: bookings.map((item) => ({
+                    product_ref: item.ref_id,
+                    quantity: item.quantity
+                }))
+            };
+
+            console.log("PAYLOAD:", payload);
+
+            const response = await fetch("/api/stripe", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(payload)
+            });
+
+            const data = await response.json();
+            setClientSecret(data.clientSecret);
+        } catch (error) {
+            console.error("Error fetching client secret:", error);
+        }
+    }, [bookings]);
+
+    // Fetch bookings on component mount
+    useEffect(() => {
+        fetchBookingData();
     }, []);
 
-    const options = { fetchClientSecret };
+    // Fetch client secret whenever bookings are updated
+    useEffect(() => {
+        if (bookings !== null) {
+            fetchClientSecret();
+        }
+    }, [bookings, fetchClientSecret]);
+
+    const stripeOptions = clientSecret ? { clientSecret } : undefined;
 
     return (
         <div id="checkout" className="py-4 bg-[--primary]">
-            <div className="">
-                {JSON.stringify(store.cart.listItems.map((item) => ({
-                    'product_ref': item.id,
-                    'quantity': item.quantity
-                })))}
-            </div>
-            <EmbeddedCheckoutProvider
-
-                stripe={stripePromise}
-                options={options}
-            >
-                <EmbeddedCheckout />
-            </EmbeddedCheckoutProvider>
+            {/* <div>
+                {JSON.stringify(
+                    bookings?.map((item) => ({
+                        product_ref: item.ref_id,
+                        quantity: item.quantity
+                    })) || []
+                )}
+            </div> */}
+            {clientSecret ? (
+                <EmbeddedCheckoutProvider stripe={stripePromise} options={stripeOptions}>
+                    <EmbeddedCheckout />
+                </EmbeddedCheckoutProvider>
+            ) : (
+                <div>Loading checkout...</div>
+            )}
         </div>
-    )
-}
+    );
+};
+

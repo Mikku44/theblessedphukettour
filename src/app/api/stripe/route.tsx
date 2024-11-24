@@ -10,6 +10,7 @@ export async function POST(req) {
     try {
         const { items } = await req.json();
         // return Response.json({data:items});
+        console.log(items)
         const session = await stripe.checkout.sessions.create({
             payment_method_types: ['card'],
             line_items:
@@ -28,6 +29,7 @@ export async function POST(req) {
 
         return Response.json({ clientSecret: session.client_secret });
     } catch (error) {
+        console.log(error);
         return Response.json({ error: error.message });
     }
 

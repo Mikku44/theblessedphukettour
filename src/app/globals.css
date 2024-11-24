@@ -150,6 +150,12 @@ body {
   background: #ededed;
  }
 
+
+ .border-none:focus {
+  border: none !important; /* Remove border */
+  outline: none; /* Remove default focus outline */
+  box-shadow: none; /* Remove any box-shadow if applied */
+}
 @layer utilities {
   .text-balance {
     text-wrap: balance;

@@ -38,11 +38,11 @@ export default function Home() {
   return (
     <>
 
-      <section className="flex gap-5 justify-center h-[80vh] ">
+      <section className="flex gap-5 justify-center h-[800px]">
 
 
-        <div className="absolute top-0 left-0 z-0  w-full h-[80vh] overflow-hidden show_bg_2">
-          <div className="h-full  grid items-center">
+        <div className="w-full top-0 left-0 z-0  h-[800px] overflow-hidden bg-slate-100 aspect-video" >
+          <div className=" h-[800px]  grid items-center">
             <div className="px-10">
               <div className="text-[16px] text-[--primary]">{t('Jalanista Trip Manager')}</div>
               <div className="text-[42px] font-bold">{t('Hello')},</div>
@@ -52,7 +52,7 @@ export default function Home() {
           </div>
         </div>
 
-        <section className="container absolute lg:bottom-20 md:bottom-10 bottom-0 ">
+        {/* <section className="container absolute lg:bottom-20 md:bottom-10 bottom-0 ">
           <div className="bg-white rounded-[30px] p-10 min-h-[100px] shadow-md">
             <div className="font-bold text-2xl">
 
@@ -61,7 +61,7 @@ export default function Home() {
           </div>
 
           <div className="flex justify-center mt-[-25px] w-[100%]"><Button className="w-[300px] bg-[--primary] text-white">{t('Search Place')}</Button></div>
-        </section>
+        </section> */}
 
       </section>
 
@@ -69,7 +69,7 @@ export default function Home() {
       <section>
         <div className="bg-white p-10 min-h-[300px]">
           <div className="text-[34px] font-bold py-5">{t('Explore categories')}</div>
-          <div className="flex justify-evenly flex-wrap gap-10">
+          <div className="flex flex-wrap gap-10 justify-between">
 
 
             {categories.map((item, key) => <div key={key} className="w-20">
@@ -109,7 +109,7 @@ export default function Home() {
                   <span>2d left</span>
                 </div>
                 <button className="p-2 rounded-full bg-gray-100 hover:bg-gray-200">
-                <ArrowUpRight />
+                  <ArrowUpRight />
                 </button>
               </div>
 

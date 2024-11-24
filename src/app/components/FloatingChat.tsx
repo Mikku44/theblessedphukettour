@@ -5,23 +5,24 @@ import { Popover, PopoverTrigger, PopoverContent } from "@nextui-org/popover";
 import { Textarea } from "flowbite-react";
 
 export default function FloatingChat() {
-  return <div className="fixed bottom-5 right-5">
-    <Popover placement={"top-end"}  backdrop="opaque">
-      <PopoverTrigger>
-        <Button isIconOnly={true} radius="full" className="p-3 w-[56px] h-[56px] border-[1px]  shadow-md bg-[--primary] text-white"><MessageCircle /></Button>
-      </PopoverTrigger>
-
-      <PopoverContent>
-        <div className="px-1 py-2">
-          <div className="text-lg font-bold">Assistant</div>
-          <Chat />
-          <div className="text-[14px] py-2">
-              <Textarea name="" className="rounded-xl" id=""/>
+  return <div className="w-full flex justify-center fixed bottom-5 z-[10]">
+    <div  className="w-[1215px] flex justify-end px-5 " >
+      <Popover placement={"top-end"} backdrop="opaque">
+        <PopoverTrigger>
+          <Button isIconOnly={true} radius="full" className="p-3 w-[56px] h-[56px] border-[1px]  shadow-md bg-[--primary] text-white"><MessageCircle /></Button>
+        </PopoverTrigger>
+        <PopoverContent>
+          <div className="px-1 py-2">
+            <div className="text-lg font-bold">Assistant</div>
+            <Chat />
+            <div className="text-[14px] py-2">
+                <Textarea name="" className="rounded-xl" id=""/>
+            </div>
+            <Button className="float-end bg-[--primary] text-white" >Send</Button>
           </div>
-          <Button className="float-end bg-[--primary] text-white" >Send</Button>
-        </div>
-      </PopoverContent>
-    </Popover>
+        </PopoverContent>
+      </Popover>
+    </div>
   </div>
 }
 

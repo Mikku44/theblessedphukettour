@@ -17,23 +17,23 @@ export default function Page() {
     const [currentTap, setCurrentTap] = useState("island");
     const [boatType, setBoatType] = useState('longTail');
 
-    return <main className="min-h-screen bg-slate-100">
+    return <main className="min-h-screen ">
        
-            <div className="w-full overflow-hidden  rounded-b-[40px]">
+            <div className="w-full overflow-hidden  rounded-b-[40px] p-2 ">
                 <Carousel items={
                     [
                         "/images/banner/banner1.png",
                         "/images/banner/banner2.png",
                         "/images/banner/banner3.png",
                     ].map((item, index) =>
-                        <div key={index} className="bg-black  text-white ">
-                            <img src={item} alt="" />
+                        <div key={index} className=" text-white ">
+                            <img src={item} alt="" className=" rounded-[30px] " />
                         </div>
                     )
-                } className="w-full lg:h-[620px] h-[50vh] aspect-auto" />
+                } className="w-full lg:h-[620px] h-[50vh]  aspect-auto" />
             </div>
-            <div className="mx-auto w-[80vw] my-10 overflow-hidden">
-                <div className="text-3xl font-bold pb-5">What are you looking for?</div>
+            <div className="mx-auto w-[80vw] my-10 overflow-hidden ">
+                <div className="text-3xl px-5 font-bold pb-5">What are you looking for?</div>
                 <div className="flex flex-wrap gap-4 py-2 lg:w-full w-[80vw] overflow-auto">
                     {/* <Tabs
                         style={{ fontWeight: "bold" }}
@@ -54,7 +54,7 @@ export default function Page() {
                         <Tab key="jet" title="Jet ski" />
                         <Tab key="scuba" title="Scuba dive" />
                     </Tabs> */}
-                    <div className="flex gap-2">
+                    <div className="flex gap-2 px-5">
                         <Button className={` bg-[--primary] p-2 text-white ${currentTap == 'island' && "bg-[--secondary]"}`}
                             onClick={e => setCurrentTap('island')}
                         >Tour by company</Button>
@@ -132,7 +132,7 @@ function Islands() {
         GetData();
     }, []);
     return <>
-        <div className="grid lg:grid-cols-2  gap-2  w-full py-5 ">
+        <div className="grid lg:grid-cols-2 md:grid-cols-1  gap-2  lg:w-[1215px] md:w-full py-5 px-5">
             {data.length > 0 && data.map((item: any, index: number) => {
 
                 return <a key={index} href={`/categories/island/${item?.id}`} className="rounded-xl w-full h-auto p-4 border-2 bg-white flex flex-col justify-between">

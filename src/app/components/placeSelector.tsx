@@ -3,18 +3,25 @@ import {
     AutocompleteItem
   } from "@nextui-org/autocomplete";
 
-export default function PlaceSelector() {
+export default function PlaceSelector({onChange}:any) {
+
   return (
     <Autocomplete
       defaultItems={places}
       label="Pick up place"
       placeholder="Search the place to pick up"
-      className=""
+      className="border-none"
       classNames={{
+
         base:"border-none my-2 focus:border-none active:border-none ring-none rounded-xl"
       }}
+      style={{border:"none"}}
+      onSelectionChange={(e) =>{
+
+        onChange(e)
+      }}
     >
-      {(animal) => <AutocompleteItem key={animal.value}>{animal.label}</AutocompleteItem>}
+      {(item) => <AutocompleteItem key={item.value } >{item.label}</AutocompleteItem>}
     </Autocomplete>
   );
 }
