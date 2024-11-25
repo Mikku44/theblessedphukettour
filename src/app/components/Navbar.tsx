@@ -5,7 +5,7 @@ import { Dropdown, DropdownItem, DropdownMenu, DropdownSection, DropdownTrigger 
 import { Input } from "@nextui-org/input";
 import { Navbar, NavbarBrand, NavbarContent, NavbarItem, NavbarMenu, NavbarMenuItem, NavbarMenuToggle } from "@nextui-org/navbar";
 import { Avatar, Badge } from "flowbite-react";
-import { ChevronDown, Menu, Minus, Plus, ShoppingBag, Variable, X } from "lucide-react";
+import { ChevronDown, Globe, Menu, Minus, Plus, ShoppingBag, ShoppingCart, Ticket, Tickets, Variable, X } from "lucide-react";
 
 import Link from "next/link";
 import { useContext, useEffect, useState } from "react";
@@ -26,10 +26,6 @@ export default function Navigation() {
     const [showCart, setShowCart] = useState(false);
     const [user, setUser] = useState<any>();
 
-
-    const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
-
-    const [profileDropdown, setProfileDropdown] = useState<boolean>(false);
 
 
     const menuItems = [
@@ -88,7 +84,7 @@ export default function Navigation() {
 
     return <header className="fixed top-0 w-full z-[99] bg-black ">
         <nav className=" lg:w-[1215px] md:w-full w-full mx-auto lg:px-0 md:px-5 px-3">
-          
+
 
             <div className="w-full flex items-center justify-between p-1">
                 {/* Mobile menu content */}
@@ -101,8 +97,8 @@ export default function Navigation() {
                         <Menu className="text-white"></Menu>
                     </Button>
                     <Link href="/">
-                            <img src="/icons/logofill.png" alt="Jalanista Logo" className="h-[35px]" />
-                        </Link>
+                        <img src="/icons/logofill.png" alt="Jalanista Logo" className="h-[35px]" />
+                    </Link>
                 </div>
 
 
@@ -160,33 +156,37 @@ export default function Navigation() {
                 </div>
 
                 {/* Right side content */}
-                <div className="flex items-center gap-4">
+                <div className="flex items-center gap-2">
                     {!user ? (
                         <>
-                            <div className="hidden lg:block">
-                                <Button
-                                    as={Link}
-                                    href={`/login?from=${pathName}`}
-                                    className="text-white"
-                                    variant="light"
-                                >
-                                    Login
-                                </Button>
-                            </div>
+
                             <div>
                                 <Button
                                     as={Link}
                                     href="/register"
                                     color="primary"
                                     className="bg-[--primary] text-white"
-                                    variant="flat"
+                                    variant="light"
                                 >
                                     Sign Up
+                                </Button>
+                            </div>
+                            <div className="hidden lg:block">
+                                <Button
+                                    as={Link}
+                                    href={`/login?from=${pathName}`}
+                                    className="text-white"
+                                    variant="flat"
+                                >
+                                    Login
                                 </Button>
                             </div>
                         </>
                     ) : (
                         <>
+                            <LangButton />
+                            <BookingButton />
+
                             {/* Cart button */}
                             <div className="relative">
                                 <Button
@@ -198,7 +198,7 @@ export default function Navigation() {
                                     <div className="absolute top-0 right-0 bg-red-500 text-white rounded-full px-2 text-xs">
                                         {cart.items.length}
                                     </div>
-                                    <ShoppingBag />
+                                    <ShoppingCart />
                                 </Button>
 
                                 {/* Cart dropdown panel */}
@@ -289,8 +289,8 @@ export default function Navigation() {
                             <Link
                                 href="#"
                                 className={`block py-2 px-4 ${index === 2 ? "text-yellow-500" :
-                                        index === menuItems.length - 1 ? "text-red-500" :
-                                            "text-gray-700"
+                                    index === menuItems.length - 1 ? "text-red-500" :
+                                        "text-gray-700"
                                     }`}
                             >
                                 {item}
@@ -572,4 +572,46 @@ export default function Navigation() {
             </Navbar>
         </>
     );
+}
+
+
+
+function BookingButton() {
+    return <Dropdown>
+        <DropdownTrigger>
+            <Button isIconOnly className="text-white relative"
+                variant="light">
+                <Tickets />
+            </Button>
+        </DropdownTrigger>
+        <DropdownMenu>
+
+            <DropdownItem>
+                <Link href="#">Product 1</Link>
+            </DropdownItem>
+
+        </DropdownMenu>
+    </Dropdown>
+}
+
+
+function LangButton() {
+    return <Dropdown>
+        <DropdownTrigger>
+            <Button isIconOnly className="text-white relative"
+                variant="light">
+                <Globe />
+            </Button>
+        </DropdownTrigger>
+        <DropdownMenu>
+
+            <DropdownItem>
+                <Link href="#">English</Link>
+            </DropdownItem>
+            <DropdownItem>
+                <Link href="#">Arabic</Link>
+            </DropdownItem>
+
+        </DropdownMenu>
+    </Dropdown>
 }

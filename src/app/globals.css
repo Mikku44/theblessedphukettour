@@ -10,6 +10,11 @@
   --primary-50: #bad5d8;
 
 
+  --primary-2:#A94C4C;
+
+  --primary-3:#F12C2C;
+
+
   --secondary:#fab00b;
   --secondary-50:#df9c0d;
 }
@@ -151,9 +156,14 @@ body {
  }
 
 
- .border-none:focus {
+ .border-none,.outline-none {
   border: none !important; /* Remove border */
-  outline: none; /* Remove default focus outline */
+  outline: none !important; /* Remove default focus outline */
+  box-shadow: none; /* Remove any box-shadow if applied */
+}
+ .border-none:focus,.outline-none:focus {
+  border: none !important; /* Remove border */
+  outline: none !important; /* Remove default focus outline */
   box-shadow: none; /* Remove any box-shadow if applied */
 }
 @layer utilities {

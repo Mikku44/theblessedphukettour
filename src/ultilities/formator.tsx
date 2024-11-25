@@ -11,6 +11,10 @@ export const formatCurrency = (amount:number, currencyCode:string) => {
         'USD': {
             locale: 'en-US',
             options: { style: 'currency', currency: 'USD' }
+        },
+        '': {
+            locale: 'en-IN',
+            options: { maximumSignificantDigits: 3 }
         }
     };
     const currencyConfig = config[currencyCode];

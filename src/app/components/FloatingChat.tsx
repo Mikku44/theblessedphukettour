@@ -5,11 +5,11 @@ import { Popover, PopoverTrigger, PopoverContent } from "@nextui-org/popover";
 import { Textarea } from "flowbite-react";
 
 export default function FloatingChat() {
-  return <div className="w-full flex justify-center fixed bottom-5 z-[10]">
-    <div  className="w-[1215px] flex justify-end px-5 " >
-      <Popover placement={"top-end"} backdrop="opaque">
+  return <div className="w-full flex justify-center fixed bottom-5 ">
+    <div  className="w-[1215px] flex justify-end px-5  z-[10]" >
+      <Popover placement={"top-end"} backdrop="opaque" className="">
         <PopoverTrigger>
-          <Button isIconOnly={true} radius="full" className="p-3 w-[56px] h-[56px] border-[1px]  shadow-md bg-[--primary] text-white"><MessageCircle /></Button>
+          <Button isIconOnly={true} radius="full" className="p-3 fixed bottom-5 w-[56px] h-[56px] border-[1px]  shadow-md bg-[--primary] text-white"><MessageCircle /></Button>
         </PopoverTrigger>
         <PopoverContent>
           <div className="px-1 py-2">
