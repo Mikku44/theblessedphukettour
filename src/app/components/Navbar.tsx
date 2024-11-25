@@ -82,7 +82,7 @@ export default function Navigation() {
         }
     ];
 
-    return <header className="fixed top-0 w-full z-[99] bg-black ">
+    return <header className="sticky top-0 w-full z-[99] bg-black ">
         <nav className=" lg:w-[1215px] md:w-full w-full mx-auto lg:px-0 md:px-5 px-3">
 
 
