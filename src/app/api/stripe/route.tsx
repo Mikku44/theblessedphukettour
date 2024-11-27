@@ -24,7 +24,7 @@ export async function POST(req) {
             mode: 'payment',
             ui_mode: 'embedded',
 
-            return_url: 'http://localhost:3000/checkout?session_id={CHECKOUT_SESSION_ID}',
+            return_url: bast_url + 'checkout?session_id={CHECKOUT_SESSION_ID}',
         });
 
         return Response.json({ clientSecret: session.client_secret });
