@@ -32,7 +32,7 @@ function CartProduct(props) {
                     </div>
                 </div>
                 <div className="flex items-center gap-2">
-                    <div className="">฿ <span className="font-bold text-xl">{(quantity * productData.price).toFixed(2)}</span></div>
+                    <div className="">฿ <span className="font-bold text-xl">{(quantity * productData?.price).toFixed(2)}</span></div>
                     <Button variant="light" isIconOnly={true}  onClick={() => cart.deleteFromCart(id)}><Trash size={'15'}/></Button>
                 </div>
             </div>

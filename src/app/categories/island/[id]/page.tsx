@@ -43,7 +43,14 @@ export default function Page({ params }: { params: { id: string } }) {
             prices: [],
             pick_up_place: '',
             datetime: '',
-            totalPrice: 0
+            totalPrice: 0,
+            name: '',
+            lastname: '',
+            email: '',
+            phone: '',
+            other: '',
+            names: []
+
 
         }
     );
@@ -62,7 +69,7 @@ export default function Page({ params }: { params: { id: string } }) {
                 setState((prevState) => ({
                     ...prevState,
                     quantity: result?.data.map(() => 0),
-                    prices: result?.data.map((item) => item?.unit_amount/100),
+                    prices: result?.data.map((item) => item?.unit_amount / 100),
                 }));
             })
         } else {
@@ -76,7 +83,9 @@ export default function Page({ params }: { params: { id: string } }) {
 
     }
 
-
+    useEffect(() => {
+        console.log("NAMES : ", state.names)
+    }, [state.names]);
 
     useEffect(() => {
         if (data)
@@ -256,7 +265,7 @@ export default function Page({ params }: { params: { id: string } }) {
                                         </Popover>}
                                     </div>
 
-                                    <div className="text-xl font-bold">{formatCurrency(item?.unit_amount/100, "")} THB</div>
+                                    <div className="text-xl font-bold">{formatCurrency(item?.unit_amount / 100, "")} THB</div>
                                 </div>
                                 <div className="flex gap-2 items-center">
                                     <Button onClick={() => setState((prev) => ({
@@ -314,16 +323,36 @@ export default function Page({ params }: { params: { id: string } }) {
 
 
                     {
-                         (state.quantity.length && state.quantity.reduce((acc,cur) => acc+cur) > 0) &&
-                         <div className="grid gap-2">
+                        (state.quantity.length && state.quantity.reduce((acc, cur) => acc + cur) > 0) &&
+                        <div className="grid gap-2">
+                            <div className="text-sm mb-1">People 1</div>
                             <div className="grid grid-cols-2 gap-2">
-                                <Input placeholder="Name" classNames={{input:"border-none"}}></Input>
-                                <Input placeholder="Last name" classNames={{input:"border-none"}}></Input>
+                                <Input value={state.name} onChange={(e) => setState(prev => ({ ...prev, name: e.target.value }))} placeholder="Name" classNames={{ input: "border-none" }}></Input>
+                                <Input value={state.lastname} onChange={(e) => setState(prev => ({ ...prev, lastname: e.target.value }))} placeholder="Last name" classNames={{ input: "border-none" }}></Input>
                             </div>
-                            <Input placeholder="Email address" type="email" classNames={{input:"border-none"}}></Input>
-                            <Input placeholder="Contact Number" type="phone" classNames={{input:"border-none"}}></Input>
-                            <Input placeholder="Other contact chanel eg. WhatsApp/LINE" type="phone" classNames={{input:"border-none"}}></Input>
-                         </div>
+                            <Input value={state.email ||user?.email}  placeholder="Email address" type="email" classNames={{ input: "border-none" }}></Input>
+                            <Input value={state.phone} onChange={(e) => setState(prev => ({ ...prev, phone: e.target.value }))} placeholder="Contact Number" type="phone" classNames={{ input: "border-none" }}></Input>
+                            <Input value={state.other} onChange={(e) => setState(prev => ({ ...prev, other: e.target.value }))} placeholder="Other contact chanel eg. WhatsApp/LINE" type="phone" classNames={{ input: "border-none" }}></Input>
+                        </div>
+                    }
+                    {
+                        state.quantity.length && Array.from({ length: state.quantity.reduce((acc, cur) => acc + cur) - 1 }).map((item, index) =>
+                            <div className="" key={index}>
+                                <div className="text-sm  mb-1">People {index + 2}</div>
+                                <div className="grid grid-cols-2 gap-2">
+
+                                    <Input value={state.names[index]} onChange={(e) => setState((prev) => {
+                                        const names = [...(prev.names || [])];
+                                        names[index] = e.target.value;
+                                        // console.log("NAMES: ", names);
+                                        return ({
+                                            ...prev,
+                                            names: names, 
+                                        });
+                                    })} placeholder="Name" classNames={{ input: "border-none" }}></Input>
+                                </div>
+                            </div>
+                        )
                     }
                     <div className="grid grid-cols-2 gap-2">
                         <div>
@@ -362,21 +391,26 @@ export default function Page({ params }: { params: { id: string } }) {
                         </div>
 
                         <Button onClick={async () => {
-                            if (state.quantity.reduce((acc, cur) => acc + cur) === 0) return;
+
+                            if (state.quantity.reduce((acc, cur) => acc + cur) === 0) return alert("please pick ticket > 0");
                             if (!user) window.location.href = `/login?from=${pathname}`
+
+
+
 
                             const products = state.quantity.map((item, index) => ({
                                 id: plans[index].id,
                                 quantity: item,
                                 type: 'island',
-                                pick_up_place: state?.pick_up_place,
-                                datetime: bookingDate
+
                             }));
-                            // return alert(JSON.stringify(products))
+
+             
 
 
                             products.map(async (product) => {
                                 // cart.addOneToCart(product.id, product.quantity)
+                                if(product.quantity <= 0 ) return
                                 await setDoc(doc(db, "Bookings", v4()), {
                                     uid: user.uid,
                                     created_at: new Date().toISOString(),
@@ -384,9 +418,14 @@ export default function Page({ params }: { params: { id: string } }) {
                                     type: product?.type,
                                     quantity: product?.quantity,
                                     status: "waiting",
-                                    pick_up_place: product?.pick_up_place,
-                                    datetime: product?.datetime
-
+                                    datetime: bookingDate,
+                                    pick_up_place: state?.pick_up_place,
+                                    name: state?.name,
+                                    lastname: state?.lastname,
+                                    email: state?.email,
+                                    phone: state?.phone,
+                                    other: state?.other,
+                                    names: state?.names
                                 });
                             });
 

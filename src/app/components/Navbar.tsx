@@ -13,7 +13,7 @@ import { useContext, useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import { CartContext } from "./cartContext";
 import CartProduct from "./cartProduct";
-import { doc, setDoc } from "firebase/firestore";
+import { collection, doc, getDocs, query, setDoc, where } from "firebase/firestore";
 import { db } from "../api/config/config";
 import { v4 } from "uuid";
 
@@ -251,7 +251,7 @@ export default function Navigation() {
                                             variant="light"
                                         >
                                             <img
-                                                src={user?.image || user?.photoURL}
+                                                src={user?.photoURL}
                                                 alt="Profile"
                                                 className="w-8 h-8 rounded-full"
                                             />
@@ -577,6 +577,45 @@ export default function Navigation() {
 
 
 function BookingButton() {
+
+    type booking = {
+        id:string,
+        ref_id:string,
+        quantity:number,
+        status:string,
+
+    }
+
+    const [bookings, setBookings] = useState([]);
+    const fetchBookingData = async () => {
+        try {
+            const userJSON = localStorage.getItem('user');
+            if (!userJSON) throw new Error("User not found in localStorage");
+
+            const user = JSON.parse(userJSON);
+            const q = query(collection(db, "Bookings"), where("uid", "==", user.uid));
+            const querySnapshot = await getDocs(q);
+
+            const results = querySnapshot.docs.map((doc) => ({
+                id: doc.id,
+                ...doc.data()
+            }));
+
+            setBookings(results);
+        } catch (error) {
+            console.error("Error fetching bookings:", error);
+            setBookings([]); // Fallback to empty bookings on error
+        }
+    };
+
+    useEffect(() => {
+        console.log("BOOKING DROPDOWN")
+        fetchBookingData();
+    }, []);
+
+
+
+
     return <Dropdown>
         <DropdownTrigger>
             <Button isIconOnly className="text-white relative"
@@ -584,11 +623,13 @@ function BookingButton() {
                 <Tickets />
             </Button>
         </DropdownTrigger>
-        <DropdownMenu>
-
-            <DropdownItem>
-                <Link href="#">Product 1</Link>
-            </DropdownItem>
+        <DropdownMenu items={bookings as booking[]}>
+            {(item) => (
+                <DropdownItem key={item?.id}>
+                    {/* {item?.ref_id} */}
+                    <CartProduct id={item?.ref_id} quantity={item?.quantity}  />
+                </DropdownItem>
+            )}
 
         </DropdownMenu>
     </Dropdown>
@@ -609,7 +650,7 @@ function LangButton() {
                 <Link href="#">English</Link>
             </DropdownItem>
             <DropdownItem>
-                <Link href="#">Arabic</Link>
+                <Link href="#" className="text-right " dir="rtl">العربية</Link>
             </DropdownItem>
 
         </DropdownMenu>

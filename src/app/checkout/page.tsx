@@ -10,13 +10,13 @@ import { createElement, useCallback, useContext, useEffect, useState } from 'rea
 // recreating the `Stripe` object on every render.
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY);
 
-import { Button, Card, Label, TextInput, Textarea, Radio, Select } from 'flowbite-react'
+import { Button, Card, Label, TextInput, Textarea, Radio, Select, Timeline } from 'flowbite-react'
 import { Calendar, CreditCard, MapPin, User, CheckCircle, Clock, ThumbsUp, DollarSign, Award, Mail, Phone, Loader2, Info, XCircle } from 'lucide-react'
 import { useParams, useSearchParams } from 'next/navigation';
 import { formatCurrency } from '../../ultilities/formator';
 import { CartContext } from '../components/cartContext';
-import { collection, getDocs, onSnapshot, query, where } from 'firebase/firestore';
-import { db } from '../api/config/config';
+import { collection, getDocs, onSnapshot, query, updateDoc, where } from 'firebase/firestore';
+import { db, stripe } from '../api/config/config';
 import CartProduct from '../components/cartProduct';
 
 type CheckoutStep = 'travel-details' | 'passenger-info' | 'payment' | 'review' | 'confirmation';
@@ -49,10 +49,47 @@ export default function TravelCheckout() {
         else if (currentStep === 'payment') setCurrentStep('passenger-info');
         else if (currentStep === 'passenger-info') setCurrentStep('travel-details');
     };
+
+    // Fetch booking data from Firestore
+    const updateBookingData = async (session_id: string) => {
+        try {
+            const session = await stripe.checkout.sessions.retrieve(session_id);
+            if (session.payment_status !== "paid") return alert("Invalid Session ID")
+            const userJSON = localStorage.getItem('user');
+            if (!userJSON) throw new Error("User not found in localStorage");
+
+            const user = JSON.parse(userJSON);
+            const q = query(
+                collection(db, "Bookings"),
+                where("uid", "==", user.uid),
+                where("status", "==", "approved")
+            );
+
+            const querySnapshot = await getDocs(q);
+
+            // Update each document
+            const updatePromises = querySnapshot.docs.map((doc) =>
+                updateDoc(doc.ref, {
+                    status: "paid",
+                })
+            );
+
+            // Wait for all updates to complete
+            await Promise.all(updatePromises);
+
+            console.log("All bookings have been updated to 'paid'");
+        } catch (error) {
+            console.error("Error fetching bookings:", error);
+
+        }
+    };
     useEffect(() => {
         console.log("PATH : ", searchParams)
         if (session_id) {
+
             setCurrentStep('review')
+            updateBookingData(session_id);
+
         }
     }, [searchParams]);
 
@@ -75,21 +112,26 @@ export default function TravelCheckout() {
 
     const statusConfig = {
         waiting: {
-          color: "bg-yellow-100 text-yellow-800 border-yellow-200 dark:bg-yellow-900 dark:text-yellow-300 dark:border-yellow-700",
-          icon: Clock,
-          label: "Waiting"
+            color: "bg-yellow-100 text-yellow-800 border-yellow-200 dark:bg-yellow-900 dark:text-yellow-300 dark:border-yellow-700",
+            icon: Clock,
+            label: "Waiting"
         },
         approved: {
-          color: "bg-green-100 text-green-800 border-green-200 dark:bg-green-900 dark:text-green-300 dark:border-green-700",
-          icon: CheckCircle,
-          label: "Approved"
+            color: "bg-green-100 text-green-800 border-green-200 dark:bg-green-900 dark:text-green-300 dark:border-green-700",
+            icon: CheckCircle,
+            label: "Approved"
         },
         rejected: {
-          color: "bg-red-100 text-red-800 border-red-200 dark:bg-red-900 dark:text-red-300 dark:border-red-700",
-          icon: XCircle,
-          label: "Rejected"
-        }
-      }
+            color: "bg-red-100 text-red-800 border-red-200 dark:bg-red-900 dark:text-red-300 dark:border-red-700",
+            icon: XCircle,
+            label: "Rejected"
+        },
+        paid: {
+            color: "bg-blue-100 text-blue-800 border-blue-200 dark:bg-blue-900 dark:text-blue-300 dark:border-blue-700",
+            icon: XCircle,
+            label: "Paid"
+        },
+    }
 
 
 
@@ -103,69 +145,93 @@ export default function TravelCheckout() {
     };
 
     const fetchBookingData = async () => {
-        const userJSON = localStorage.getItem('user');
-        const user = JSON.parse(userJSON);
-        const q = query(collection(db, "Bookings"), where("uid", "==", user.uid));
+        try {
+            const userJSON = localStorage.getItem('user');
+            if (!userJSON) throw new Error('No user found');
 
-        const querySnapshot = await getDocs(q);
-        const results: any[] = [];
-        querySnapshot.forEach((doc: any) => {
-            results.push({ id: doc.id, ...doc.data() });
-        });
-        console.log("DATA")
+            const user = JSON.parse(userJSON);
+            const q = query(collection(db, "Bookings"), where("uid", "==", user.uid),where("status","in",['waiting','approved','rejected']));
 
+            // Create a Set to store unique booking IDs
+            const uniqueBookingIds = new Set();
 
-        // 
-        const unsubscribe = onSnapshot(q, (snapshot) => {
-            snapshot.docChanges().forEach((change) => {
-              if (change.type === "added") {
-                  console.log("New city: ", change.doc.data());
-              }
-              if (change.type === "modified") {
-                  console.log("Modified city: ", change.doc.data());
-              }
-              if (change.type === "removed") {
-                  console.log("Removed city: ", change.doc.data());
-              }
+            const querySnapshot = await getDocs(q);
+            const initialResults = querySnapshot.docs.map(doc => {
+                const bookingData = { id: doc.id, ...doc.data() };
+
+                // Add booking ID to the Set and check for existence before adding
+                if (!uniqueBookingIds.has(bookingData.id)) {
+                    uniqueBookingIds.add(bookingData.id);
+                    return bookingData;
+                } else {
+                    console.warn(`Duplicate booking with ID: ${bookingData.id} found and ignored.`);
+                    return null; // Or perform other desired action for duplicates (e.g., logging)
+                }
+            }).filter(data => data !== null); // Remove null values from filtered results
+
+            setBookings(initialResults);
+
+            const unsubscribe = onSnapshot(q, (snapshot) => {
+                snapshot.docChanges().forEach((change) => {
+                    switch (change.type) {
+                        // case "added":
+                        //     const addedBooking = { id: change.doc.id, ...change.doc.data() };
+                          
+                        //     // Try adding the booking ID to the Set. If it fails (duplicate), ignore
+                        //     if (!uniqueBookingIds.add(addedBooking.id)) {
+                        //       console.warn(`Duplicate booking with ID: ${addedBooking.id} found and ignored.`);
+                        //     } else {
+                        //       // Update state only if the booking ID was unique
+                        //       setBookings(prev => [...prev, addedBooking]);
+                        //     }
+                        //     break;
+                        case "modified":
+                            setBookings(prev => prev.map(item =>
+                                item.id === change.doc.id ? { id: change.doc.id, ...change.doc.data() } : item
+                            ));
+                            break;
+                        case "removed":
+                            setBookings(prev => prev.filter(item => item.id !== change.doc.data().id)); // Use `change.doc.data().id` for clarity
+                            break;
+                    }
+                });
             });
-          });
-        // 
 
-        setBookings(results|| [])
-        return
-    }
+            return unsubscribe; // Return unsubscribe function for cleanup
+        } catch (error) {
+            console.error("Error fetching bookings:", error);
+        }
+    };
     useEffect(() => {
-        fetchBookingData();
-    }, []);
+        if (currentStep == 'passenger-info')
+            fetchBookingData();
+    }, [currentStep]);
 
     return (
         <div className="container w-[70vw] mx-auto p-4 mt-5">
             <div>
                 <h1 className="text-2xl font-bold mb-6">Travel Booking Checkout</h1>
 
-                {/* Step Progress Indicator */}
-                <div className="flex flex-col md:flex-row justify-between mb-8 relative">
-                    {steps.map((step, index) => (
-                        <div key={step.id} className="flex flex-col items-center text-center mb-4 md:mb-0 z-10">
-                            <div
-                                className={`w-10 h-10 rounded-full flex items-center justify-center ${index <= steps.findIndex((s) => s.id === currentStep)
+                <ol className="relative flex flex-col sm:flex-row">
+                    {steps.map((item, index) => (
+                        <li key={index} className="flex-1 mb-6 sm:mb-0">
+                            <div className="flex items-center">
+                                <div className={`w-10 h-10 rounded-full flex items-center justify-center ${index <= steps.findIndex((s) => s.id === currentStep)
                                     ? 'bg-blue-600 text-white'
                                     : 'bg-gray-200 text-gray-500'
-                                    }`}
-                            >
-                                {createElement(step.icon, { size: 20 })}
+                                    }`}>
+                                    {createElement(item.icon, { size: 20 })}
+                                </div>
+                                <div className="hidden sm:flex w-full bg-gray-200 h-0.5 dark:bg-gray-700"></div>
                             </div>
-                            <div className="mt-2 text-sm">{step.label}</div>
-                        </div>
+                            <div className="mt-3 sm:pr-8">
+                                <h3 className="text-lg text-gray-900 dark:text-white">
+                                    {item.label}
+                                </h3>
+                            </div>
+                        </li>
                     ))}
-                    <div className="absolute top-5 left-0 w-full h-0.5 bg-gray-200 -z-10 hidden md:block" />
-                    <div
-                        className={`absolute top-5 left-0 h-0.5 bg-blue-600 transition-all duration-500 -z-10 hidden md:block`}
-                        style={{
-                            width: `${(steps.findIndex((s) => s.id === currentStep) / (steps.length - 1)) * 100}%`,
-                        }}
-                    />
-                </div>
+                </ol>
 
                 {/* Form Steps */}
                 {currentStep === 'travel-details' && (
@@ -202,36 +268,40 @@ export default function TravelCheckout() {
                                         <div className="text-sm text-gray-500 dark:text-gray-400">Item:</div>
                                         <div className="grid items-start gap-3">
                                             {/* <Boat className="h-5 w-5 text-blue-600 mt-0.5" /> */}
-                                            {bookings?.map((item, index) => 
-                                            <>
-                                            <div className={`${statusConfig[item?.status].color} w-fit px-2 py-1 rounded-full`}>{statusConfig[item?.status].label}</div>
-                                            
-                                            <CartProduct key={index} id={item?.ref_id} quantity={item?.quantity}/>
-                                            </>
+                                            {bookings?.map((item, index) =>
+                                                <>
+
+
+                                                    <div className="justify-between flex gap-2 w-full ">
+                                                        <div className="flex items-center gap-3">
+                                                            <MapPin className="h-5 w-5 text-gray-500" />
+                                                            <div>
+                                                                <div className="text-sm text-gray-500 dark:text-gray-400">
+                                                                    Pick up at
+                                                                </div>
+                                                                <div>{item?.pick_up_place}</div>
+                                                            </div>
+                                                        </div>
+                                                        <div className={`${statusConfig[item?.status]?.color} w-fit px-2 py-1 rounded-full flex items-center`}>{statusConfig[item?.status]?.label}</div>
+                                                    </div>
+                                                    <div className="flex items-center gap-3">
+                                                        <Calendar className="h-5 w-5 text-gray-500" />
+                                                        <div>
+                                                            <div className="text-sm text-gray-500 dark:text-gray-400">
+                                                                Date
+                                                            </div>
+                                                            <div>{new Date(item?.datetime).toDateString()}</div>
+                                                        </div>
+                                                    </div>
+
+                                                    <CartProduct key={index} id={item?.ref_id} quantity={item?.quantity} />
+
+                                                </>
                                             )}
                                         </div>
                                     </div>
-                                    <hr className="h-px my-4 bg-gray-200 border-0 dark:bg-gray-700" />
-                                    <div className="space-y-4">
-                                        <div className="flex items-center gap-3">
-                                            <Calendar className="h-5 w-5 text-gray-500" />
-                                            <div>
-                                                <div className="text-sm text-gray-500 dark:text-gray-400">
-                                                    Date
-                                                </div>
-                                                <div>15/12/2024</div>
-                                            </div>
-                                        </div>
-                                        <div className="flex items-center gap-3">
-                                            <MapPin className="h-5 w-5 text-gray-500" />
-                                            <div>
-                                                <div className="text-sm text-gray-500 dark:text-gray-400">
-                                                    Pick up at
-                                                </div>
-                                                <div>Phuket resort hotel</div>
-                                            </div>
-                                        </div>
-                                    </div>
+                                    {/* <hr className="h-px my-4 bg-gray-200 border-0 dark:bg-gray-700" /> */}
+
                                 </div>
 
                                 {/* Right Section */}
@@ -346,7 +416,7 @@ const Payment = () => {
             if (!userJSON) throw new Error("User not found in localStorage");
 
             const user = JSON.parse(userJSON);
-            const q = query(collection(db, "Bookings"), where("uid", "==", user.uid));
+            const q = query(collection(db, "Bookings"), where("uid", "==", user.uid), where('status', '==', 'approved'));
             const querySnapshot = await getDocs(q);
 
             const results = querySnapshot.docs.map((doc) => ({
@@ -363,7 +433,7 @@ const Payment = () => {
 
     // Fetch client secret for Stripe
     const fetchClientSecret = useCallback(async () => {
-        if (!bookings || bookings.length === 0) return;
+        if (!bookings || bookings.length === 0) return alert("Please wait your booking plan approve before payment.");
 
         try {
             const payload = {

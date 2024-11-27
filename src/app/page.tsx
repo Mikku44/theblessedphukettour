@@ -7,6 +7,7 @@ import DraggableScroll from "./components/DraggableScroll";
 import RecommendedCard from "./components/RecommendedCard";
 import Link from "next/link";
 import { image } from "@nextui-org/theme";
+import Carousel from "./components/carousel";
 
 export default function Home() {
   const t = useTranslations();
@@ -38,32 +39,42 @@ export default function Home() {
   return (
     <>
 
-      <section className="flex gap-5 justify-center h-[800px]">
+      <section className="flex flex-col md:flex-row gap-5 justify-center h-auto md:h-[500px] overflow-hidden mt-5">
+        <div className="w-full relative bg-slate-100 aspect-video md:aspect-auto">
+          {/* Carousel */}
+          <Carousel
+            items={[
+              "/images/banner/banner1.png",
+              "/images/banner/banner2.png",
+              "/images/banner/banner3.png",
+            ].map((item, index) => (
+              <div key={index} className="text-white">
+                <img
+                  src={item}
+                  alt="Beautiful banner showcasing Jalanista Trip Manager"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            ))}
+            className="absolute top-0 left-0 w-full h-full object-cover z-0"
+          />
 
-
-        <div className="w-full top-0 left-0 z-0  h-[800px] overflow-hidden bg-slate-100 aspect-video" >
-          <div className=" h-[800px]  grid items-center">
-            <div className="px-10">
-              <div className="text-[16px] text-[--primary]">{t('Jalanista Trip Manager')}</div>
-              <div className="text-[42px] font-bold">{t('Hello')},</div>
-              <div className="text-[42px]">{t('Where do you wanna go?')}</div>
-              <div className="text-[16px] text-white w-fit px-5 py-2 flex gap-2 items-center rounded-full bg-[--primary] "><MapPin />  {t('THAILAND')} , {t('Phuket')}</div>
+          {/* Overlay and Text */}
+          <div className="absolute inset-0 z-10 flex items-center text-white bg-gradient-to-t from-zinc-900/80 to-slate-50/10 rounded-xl">
+            <div className="px-5 sm:px-10">
+              <p className="text-sm sm:text-base md:text-lg text-[--primary]">{t('Jalanista Trip Manager')}</p>
+              <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold">{t('Hello')},</h1>
+              <h2 className="text-2xl sm:text-3xl md:text-4xl">{t('Where do you wanna go?')}</h2>
+              <div className="mt-4 text-sm sm:text-base md:text-lg w-fit px-4 sm:px-5 py-2 flex gap-2 items-center rounded-full bg-[--primary]">
+                <MapPin className="w-4 sm:w-5 h-4 sm:h-5" />
+                {t('THAILAND')}, {t('Phuket')}
+              </div>
             </div>
           </div>
         </div>
-
-        {/* <section className="container absolute lg:bottom-20 md:bottom-10 bottom-0 ">
-          <div className="bg-white rounded-[30px] p-10 min-h-[100px] shadow-md">
-            <div className="font-bold text-2xl">
-
-              {t('Find you favourite places')}?
-            </div>
-          </div>
-
-          <div className="flex justify-center mt-[-25px] w-[100%]"><Button className="w-[300px] bg-[--primary] text-white">{t('Search Place')}</Button></div>
-        </section> */}
-
       </section>
+
+
 
 
       <section>

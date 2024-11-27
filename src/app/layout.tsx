@@ -65,6 +65,7 @@ export default async function RootLayout({
     <html lang={locale}>
       <Head>
         <meta name="agd-partner-manual-verification" content="" />
+        <link rel="shortcut icon" href="/icons/logoonly.png" type="image/x-icon" />
       </Head>
       <body
         className={`${montserrat.className} ${montserrat.variable} ${noto.className} ${inter.className} ${chakra.className} ${fluttericon.variable} antialiased`}

@@ -23,6 +23,7 @@
     "@nextui-org/system": "^2.2.6",
     "@nextui-org/tabs": "^2.0.37",
     "@nextui-org/theme": "^2.2.11",
+    "@react-google-maps/api": "^2.20.3",
     "@stripe/react-stripe-js": "^3.0.0",
     "@stripe/stripe-js": "^5.2.0",
     "firebase": "^10.14.1",
@@ -37,6 +38,7 @@
     "react-dom": "^18",
     "react-use-draggable-scroll": "^0.4.7",
     "stripe": "^17.3.1",
+    "use-places-autocomplete": "^4.0.1",
     "uuid": "^11.0.3"
   },
   "devDependencies": {
