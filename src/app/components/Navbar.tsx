@@ -4,8 +4,8 @@ import { Button } from "@nextui-org/button";
 import { Dropdown, DropdownItem, DropdownMenu, DropdownSection, DropdownTrigger } from "@nextui-org/dropdown";
 import { Input } from "@nextui-org/input";
 import { Navbar, NavbarBrand, NavbarContent, NavbarItem, NavbarMenu, NavbarMenuItem, NavbarMenuToggle } from "@nextui-org/navbar";
-import { Avatar, Badge } from "flowbite-react";
-import { ChevronDown, Globe, Menu, Minus, Plus, ShoppingBag, ShoppingCart, Ticket, Tickets, Variable, X } from "lucide-react";
+import { Avatar, Badge, Card } from "flowbite-react";
+import { Calendar, CheckCircle, ChevronDown, Clock, Globe, Hash, MapPin, Menu, Minus, Package, Plus, ShoppingBag, ShoppingCart, Ticket, Tickets, Variable, X, XCircle } from "lucide-react";
 
 import Link from "next/link";
 import { useContext, useEffect, useState } from "react";
@@ -16,6 +16,7 @@ import CartProduct from "./cartProduct";
 import { collection, doc, getDocs, query, setDoc, where } from "firebase/firestore";
 import { db } from "../api/config/config";
 import { v4 } from "uuid";
+import Image from "next/image";
 
 
 
@@ -206,7 +207,43 @@ export default function Navigation() {
                                     } flex flex-col justify-between duration-200`}>
                                     <div className="overflow-auto">
                                         {cart.items.map((item, index) => (
-                                            <CartProduct id={item.id} quantity={item.quantity} key={index} />
+                                            <a href={item.page_id}>
+                                                <Card className="overflow-hidden">
+                                                    <div className="flex flex-col sm:flex-row">
+                                                        <div className="relative w-full sm:w-1/3 h-48 sm:h-auto">
+                                                            <img
+                                                                src={item.image_url}
+                                                                alt={`${item.type} image`}
+                                                            />
+                                                            <Badge className="absolute top-2 left-2 bg-white text-black">
+                                                                Qty: {item.quantity}
+                                                            </Badge>
+                                                        </div>
+                                                        <div className="flex-1 p-4">
+                                                            <h3 className="text-lg font-semibold mb-2">{item.type}</h3>
+                                                            <div className="space-y-2 text-sm">
+                                                                <div className="flex items-center">
+                                                                    <Hash className="w-4 h-4 mr-2 text-gray-500" />
+                                                                    <span className="text-gray-700">Ref ID: {item.id}</span>
+                                                                </div>
+                                                                <div className="flex items-center">
+                                                                    <Package className="w-4 h-4 mr-2 text-gray-500" />
+                                                                    <span className="text-gray-700">Type: {item.type}</span>
+                                                                </div>
+                                                                <div className="flex items-center">
+                                                                    <MapPin className="w-4 h-4 mr-2 text-gray-500" />
+                                                                    <span className="text-gray-700">Pick-up: {item.pick_up_place}</span>
+                                                                </div>
+                                                                <div className="flex items-center">
+                                                                    <Calendar className="w-4 h-4 mr-2 text-gray-500" />
+                                                                    <span className="text-gray-700">Date: {new Date(item.datetime).toLocaleString()}</span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </Card>
+                                            </a>
+                                            // <CartProduct id={item.id} quantity={item.quantity} key={index} />
                                         ))}
 
                                         {cart.items.length <= 0 && (
@@ -578,11 +615,38 @@ export default function Navigation() {
 
 function BookingButton() {
 
+    const statusConfig = {
+        waiting: {
+            color: "bg-yellow-100 text-yellow-800 border-yellow-200 dark:bg-yellow-900 dark:text-yellow-300 dark:border-yellow-700",
+            icon: Clock,
+            label: "Waiting"
+        },
+        approved: {
+            color: "bg-green-100 text-green-800 border-green-200 dark:bg-green-900 dark:text-green-300 dark:border-green-700",
+            icon: CheckCircle,
+            label: "Approved"
+        },
+        rejected: {
+            color: "bg-red-100 text-red-800 border-red-200 dark:bg-red-900 dark:text-red-300 dark:border-red-700",
+            icon: XCircle,
+            label: "Rejected"
+        },
+        paid: {
+            color: "bg-blue-100 text-blue-800 border-blue-200 dark:bg-blue-900 dark:text-blue-300 dark:border-blue-700",
+            icon: XCircle,
+            label: "Paid"
+        },
+    }
+
+
     type booking = {
-        id:string,
-        ref_id:string,
-        quantity:number,
-        status:string,
+        image_url: string;
+        datetime: string | number | Date;
+        pick_up_place: string;
+        id: string,
+        ref_id: string,
+        quantity: number,
+        status: string,
 
     }
 
@@ -593,7 +657,7 @@ function BookingButton() {
             if (!userJSON) throw new Error("User not found in localStorage");
 
             const user = JSON.parse(userJSON);
-            const q = query(collection(db, "Bookings"), where("uid", "==", user.uid));
+            const q = query(collection(db, "Bookings"), where("uid", "==", user.uid), where('status', '==', 'approved'));
             const querySnapshot = await getDocs(q);
 
             const results = querySnapshot.docs.map((doc) => ({
@@ -618,7 +682,7 @@ function BookingButton() {
 
     return <Dropdown>
         <DropdownTrigger>
-            <Button isIconOnly className="text-white relative"
+            <Button isIconOnly onClick={() => fetchBookingData()} className="text-white relative"
                 variant="light">
                 <Tickets />
             </Button>
@@ -627,7 +691,26 @@ function BookingButton() {
             {(item) => (
                 <DropdownItem key={item?.id}>
                     {/* {item?.ref_id} */}
-                    <CartProduct id={item?.ref_id} quantity={item?.quantity}  />
+                    <div className="flex gap-2">
+                        <img src={item?.image_url} alt="" />
+                        <div className="">
+                            <div className="justify-between flex gap-2 w-full ">
+                                <div className="flex items-center gap-3">
+                                    <MapPin className="h-5 w-5 text-gray-500" />
+                                    <div>
+                                        <div className="text-sm text-gray-500 dark:text-gray-400">
+                                            Pick up at
+                                        </div>
+                                        <div>{item?.pick_up_place}</div>
+                                    </div>
+                                </div>
+                                <div className={`${statusConfig[item?.status]?.color} w-fit px-2 py-1 rounded-full flex items-center`}>{statusConfig[item?.status]?.label}</div>
+                            </div>
+                            <div  >
+                                ref id: {item?.ref_id}
+                            </div>
+                        </div>
+                    </div>
                 </DropdownItem>
             )}
 

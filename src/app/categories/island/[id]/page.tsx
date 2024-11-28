@@ -330,7 +330,7 @@ export default function Page({ params }: { params: { id: string } }) {
                                 <Input value={state.name} onChange={(e) => setState(prev => ({ ...prev, name: e.target.value }))} placeholder="Name" classNames={{ input: "border-none" }}></Input>
                                 <Input value={state.lastname} onChange={(e) => setState(prev => ({ ...prev, lastname: e.target.value }))} placeholder="Last name" classNames={{ input: "border-none" }}></Input>
                             </div>
-                            <Input value={state.email ||user?.email}  placeholder="Email address" type="email" classNames={{ input: "border-none" }}></Input>
+                            <Input value={state.email || user?.email} placeholder="Email address" type="email" classNames={{ input: "border-none" }}></Input>
                             <Input value={state.phone} onChange={(e) => setState(prev => ({ ...prev, phone: e.target.value }))} placeholder="Contact Number" type="phone" classNames={{ input: "border-none" }}></Input>
                             <Input value={state.other} onChange={(e) => setState(prev => ({ ...prev, other: e.target.value }))} placeholder="Other contact chanel eg. WhatsApp/LINE" type="phone" classNames={{ input: "border-none" }}></Input>
                         </div>
@@ -347,7 +347,7 @@ export default function Page({ params }: { params: { id: string } }) {
                                         // console.log("NAMES: ", names);
                                         return ({
                                             ...prev,
-                                            names: names, 
+                                            names: names,
                                         });
                                     })} placeholder="Name" classNames={{ input: "border-none" }}></Input>
                                 </div>
@@ -357,19 +357,36 @@ export default function Page({ params }: { params: { id: string } }) {
                     <div className="grid grid-cols-2 gap-2">
                         <div>
                             <Button onClick={() => {
-                                if (state.quantity.reduce((acc, cur) => acc + cur) === 0) return;
-                                const products = state.quantity.map((item, index) => ({
+                                if (state.quantity.reduce((acc, cur) => acc + cur) === 0) return alert("please pick ticket > 0");
+
+
+                                const products = state.quantity.map((item, index) => {
+                                  
+                                    return ({
+                                    
                                     id: plans[index].id,
+                                    page_id:params.id,
                                     quantity: item,
                                     type: 'island',
-                                    pick_up_place: 'pick_up_place',
-                                    datetime: '2024-11-25T23:00:30Z'
-                                }));
+                                    status: "waiting",
+                                    datetime: bookingDate,
+                                    pick_up_place: state?.pick_up_place,
+                                    name: state?.name,
+                                    lastname: state?.lastname,
+                                    email: state?.email,
+                                    phone: state?.phone,
+                                    other: state?.other,
+                                    names: state?.names,
+                                    created_at: new Date().toISOString(),
+                                    image_url: data?.image_url?.[lang]?.[0]
+                                })});
 
 
 
 
-                                products.map((product) => cart.addOneToCart(product.id, product.quantity));
+                                products.map((product) => {
+                                    if(product.quantity <= 0) return;
+                                    return cart.addOneToCart(product)});
                                 // store.setCart((prev) => {
                                 //     const newItems =
                                 //         state.quantity.map((item, index) => ({
@@ -399,21 +416,23 @@ export default function Page({ params }: { params: { id: string } }) {
 
 
                             const products = state.quantity.map((item, index) => ({
+                                //miss id
                                 id: plans[index].id,
                                 quantity: item,
                                 type: 'island',
 
                             }));
 
-             
+
 
 
                             products.map(async (product) => {
                                 // cart.addOneToCart(product.id, product.quantity)
-                                if(product.quantity <= 0 ) return
+                                if (product.quantity <= 0) return
                                 await setDoc(doc(db, "Bookings", v4()), {
                                     uid: user.uid,
                                     created_at: new Date().toISOString(),
+                                    page_id:params.id,
                                     ref_id: product?.id,
                                     type: product?.type,
                                     quantity: product?.quantity,
