@@ -43,7 +43,7 @@ const BookingForm = () => {
     <div className="p-6 grid gap-4 lg:w-[50vw] md:w-[70vw] w-full mx-auto">
       <h2 className="text-xl font-bold mb-4 ">Booking Island Form</h2>
 
-
+      
       <label htmlFor="firstname" className="block text-sm font-medium text-gray-700">First Name</label>
       <input
         id="firstname"

@@ -1,27 +1,34 @@
 'use client'
-import { getRedirectResult, GoogleAuthProvider, signInWithRedirect } from "firebase/auth";
+import { getRedirectResult, GoogleAuthProvider, signInWithEmailAndPassword, signInWithPopup, signInWithRedirect } from "firebase/auth";
 import { useEffect, useState } from "react";
 import { auth } from "../api/config/config";
 import { Button } from "@nextui-org/button";
+import { useSearchParams } from "next/navigation";
+
+
 
 export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // Handle login logic here
-    console.log({ email, password });
-  };
 
+  const params = useSearchParams();
+  const prevPath = params.get('from');
   const loginWithGoogle = async () => {
+    console.log("CLICKED");
     try {
       const provider = new GoogleAuthProvider();
 
-      // Redirects the user to Google's login page
-      await signInWithRedirect(auth, provider);
-      alert("SIGN IN COMPLETE")
-      // After redirecting back, process the result
+      // Opens a popup for Google login
+      const result = await signInWithPopup(auth, provider);
+
+      // User signed in successfully
+      const user = result.user;
+      console.log("User Info:", user);
+      if (user) {
+        localStorage.setItem("user", JSON.stringify(user))
+        window.location.href = (prevPath || "/");
+      }
 
     } catch (error) {
       console.error("Login failed", error);
@@ -30,6 +37,7 @@ export default function Login() {
       alert("Something went wrong");
     }
   };
+
 
   const isAuthenticated = async () => {
     const result = await getRedirectResult(auth);
@@ -52,6 +60,40 @@ export default function Login() {
   }, [])
 
 
+  const loginWithCredentials = async () => {
+
+    console.log("Login with credentials : ", email, ":", password)
+
+    const result = await fetch('/api/auth', {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json", // Specify the content type
+      },
+      body: JSON.stringify({ email, password }) // Serialize the body as a JSON string
+    });
+    const data = await result.json()
+
+    console.log("RESULT : ", data)
+
+    if (data.user) {
+      const user = data.user
+      localStorage.setItem("user", JSON.stringify(user))
+      window.location.href = (prevPath || "/");
+    }
+    // signInWithEmailAndPassword(auth, email, password)
+    //   .then((userCredential) => {
+    //     // Signed in 
+    //     const user = userCredential.user;
+    //       console.log("Already Logined  : ",user)
+    //   })
+    //   .catch((error) => {
+    //     const errorCode = error.code;
+    //     const errorMessage = error.message;
+    //     console.log("Error : ",errorCode," : ",errorMessage)
+    //   });
+  }
+
+
 
   return (
     <div className="min-h-[80vh] flex flex-col justify-center py-12 sm:px-6 lg:px-8">
@@ -66,7 +108,7 @@ export default function Login() {
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
         <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
-          <form className="space-y-6" onSubmit={handleSubmit}>
+          <form className="space-y-6" onSubmit={loginWithCredentials}>
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-700">
                 Email address
@@ -125,8 +167,8 @@ export default function Login() {
 
             <div>
               <Button
-
-                type="submit"
+                onClick={loginWithCredentials}
+                type="button"
                 className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[--primary] hover:bg-[--primary] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[--primary]"
               >
                 Sign in

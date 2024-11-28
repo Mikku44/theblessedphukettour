@@ -1,7 +1,7 @@
 {
     "Hello": "Hello",
     "Where do you wanna go?":"Where do you wanna go?",
-    "The Blessed Trip manager":"The Blessed Trip manager",
+    "Jalanista Trip Manager":"Jalanista Trip Manager",
     "THAILAND": "THAILAND",
     "Explore categories": "Explore categories",
     "Phuket": "Phuket",
@@ -15,11 +15,11 @@
     "Spa":"Spa",
     "Find you favourite places":"Find you favourite places",
     "Search Place":"Search Place",
-    "The Blessed Trip Manager":"The Blessed Trip Manager",
     "Recommended for you":"Recommended for you",
     "Home": "Home",
     "Car": "Car",
     "Tour": "Tour",
+    "We also have": "We also have",
     "AddOns": "Add-Ons",
     "test":"test"
 }

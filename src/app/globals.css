@@ -10,7 +10,13 @@
   --primary-50: #bad5d8;
 
 
+  --primary-2:#A94C4C;
+
+  --primary-3:#F12C2C;
+
+
   --secondary:#fab00b;
+  --secondary-50:#df9c0d;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -107,6 +113,59 @@ body {
 }
 
 
+.pretty-scroll::-webkit-scrollbar {
+
+  width: 10px;
+  height: 20px;
+ 
+ }
+ 
+
+ 
+ .pretty-scroll::-webkit-scrollbar-thumb {
+ 
+  background: var(--primary);
+ 
+  border-bottom-left-radius: 5px;
+ 
+  border-top-left-radius: 5px;
+ 
+  border-bottom-right-radius: 5px;
+ 
+  border-top-right-radius: 5px;
+ 
+ }
+ 
+
+ 
+ .pretty-scroll::-webkit-scrollbar-thumb:hover {
+ 
+  background: rgb(131, 131, 131);
+ 
+ }
+ 
+ 
+ .pretty-scroll::-webkit-scrollbar-thumb:active {
+ 
+  background: rgb(104, 104, 104);
+ 
+ }
+
+ .pretty-scroll::-webkit-scrollbar-track{
+  background: #ededed;
+ }
+
+
+ .border-none,.outline-none {
+  border: none !important; /* Remove border */
+  outline: none !important; /* Remove default focus outline */
+  box-shadow: none; /* Remove any box-shadow if applied */
+}
+ .border-none:focus,.outline-none:focus {
+  border: none !important; /* Remove border */
+  outline: none !important; /* Remove default focus outline */
+  box-shadow: none; /* Remove any box-shadow if applied */
+}
 @layer utilities {
   .text-balance {
     text-wrap: balance;

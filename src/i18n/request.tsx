@@ -3,12 +3,13 @@ import { cookies } from 'next/headers';
 
 
 export default getRequestConfig(async () => {
-  // Provide a static locale, fetch a user setting,
-  // read from `cookies()`, `headers()`, etc.
-  const localeCookie = cookies().get('locale')?.value;
 
-  // Set a default locale if the cookie is not found
-  const locale = localeCookie || 'en';
+
+  // const localeCookie = cookies().get('locale')?.value;
+
+
+  // const locale = localeCookie || 'en';
+  const locale =  'en';
  
   return {
     locale,

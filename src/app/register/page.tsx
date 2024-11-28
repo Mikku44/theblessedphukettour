@@ -3,6 +3,7 @@ import { useState } from "react";
 import { createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { auth } from "../api/config/config";
 import { Button } from "@nextui-org/button";
+import { cookies } from "next/headers";
 
 
 export default function Register() {
@@ -22,22 +23,38 @@ export default function Register() {
 
   const signup = async () => {
     alert("SIGN UP")
+    
+    console.log({ email, password });
+    createUserWithEmailAndPassword(auth, email, password)
+    .then((userCredential) => {
+        // Signed up 
+        const user = userCredential.user;
+        console.log("USER : ", user)
+
+       
+    })
+    .catch((error) => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        console.log("ERROR  : ", errorCode, errorMessage)
+       
+    });
   }
 
   const signupWithGoogle = async () => {
     try {
       const provider = new GoogleAuthProvider();
       const result = await signInWithPopup(auth, provider);
-      
+
       // Get Google Access Token
       const credential = GoogleAuthProvider.credentialFromResult(result);
       const token = credential.accessToken;
-      
+
       // Signed-in user info
       const user = result.user;
-  
+
       // You can add further logic for `user` or `token`
-      
+
       alert("Complete");
     } catch (error) {
       // Handle Errors here
@@ -45,11 +62,11 @@ export default function Register() {
       const errorMessage = error.message;
       const email = error.customData?.email;
       const credential = GoogleAuthProvider.credentialFromError(error);
-      
+
       alert("Uncomplete");
     }
   };
-  
+
 
   return (
     <div className="min-h-[80vh] flex flex-col justify-center py-12 sm:px-6 lg:px-8">
