@@ -3,8 +3,8 @@ import { useContext, useEffect, useState } from "react";
 // import Carousel from "../../../components/carousel";
 import TimelineTrip from "../../../components/Timeline";
 import { Tab, Tabs } from "@nextui-org/tabs";
-import { Activity, CarFront, Clock, InfoIcon, Loader, MapPin, MapPinned, MapPinPlus, Slack, Utensils } from "lucide-react";
-import { Button, Popover } from "flowbite-react";
+import { Activity, CarFront, Clock, InfoIcon, Loader, Map, MapPin, MapPinHouse, MapPinned, MapPinPlus, Slack, Utensils } from "lucide-react";
+import { Button, Popover, Tooltip } from "flowbite-react";
 import Collapse from "../../../components/collapse";
 import Link from "next/link";
 import { Button as NextButton } from "@nextui-org/button";
@@ -21,6 +21,7 @@ import { usePathname } from "next/navigation";
 import { CartContext } from "../../../components/cartContext";
 import Carousel from "../../../components/carouselMultiple";
 import { Input } from "@nextui-org/input";
+import { Modal } from "../../../components/modal";
 export default function Page({ params }: { params: { id: string } }) {
     const cart = useContext(CartContext);
     const pathname = usePathname();
@@ -115,7 +116,7 @@ export default function Page({ params }: { params: { id: string } }) {
     }, []);
     return (
 
-        <div className="min-h-[80vh]  mx-auto flex justify-center relative flex-wrap py-20">
+        <div className="min-h-[80vh]  mx-auto flex justify-center relative flex-wrap pb-20">
             <section className="lg:w-[60%] w-full">
                 {/* <Carousel items={
                     data ?
@@ -127,39 +128,25 @@ export default function Page({ params }: { params: { id: string } }) {
                             <div key={1} className="bg-black h-full text-white flex justify-center items-center"><Loader className=" animate-spin" /></div>,
 
                         ]} className="m-4" /> */}
-                {isLoading && <div className="flex">
-                    <div className="flex gap-2 flex-col">
-                        <div className="rounded-xl bg-gray-200 animate-pulse aspect-square w-[100px] overflow-hidden"></div>
-                        <div className="rounded-xl bg-gray-200 animate-pulse aspect-square w-[100px] overflow-hidden"></div>
-                        <div className="rounded-xl bg-gray-200 animate-pulse aspect-square w-[100px] overflow-hidden"></div>
-                    </div>
+                {isLoading && <div className="flex flex-col mx-2">
+
                     <div className="relative w-[90%]  rounded-lg bg-gray-200 animate-pulse mx-2" />
+                    <div className="flex gap-2">
+                        <div className=" bg-gray-200 animate-pulse aspect-square w-[100px] overflow-hidden"></div>
+                        <div className=" bg-gray-200 animate-pulse aspect-square w-[100px] overflow-hidden"></div>
+                        <div className=" bg-gray-200 animate-pulse aspect-square w-[100px] overflow-hidden"></div>
+                    </div>
                 </div>}
                 {data && data?.image_url && <Carousel images={data?.image_url?.[lang]} />}
                 <div className="px-10 py-10">
                     <div className="lg:text-[36px] md:text-[32px] text-[32px] font-bold">{data?.place_name || "Island Name"}</div>
-                    <div className="flex  gap-2 font-semibold"><MapPin />Location :  {data?.province || "Phuket"} , Thailand</div>
-                    <div className="flex flex-wrap gap-4 py-5">
-                        {/* <Tabs
+                    <div className="flex  gap-2 font-semibold  text-red-700"><Map className="text-black" />Island location  in  {data?.province || "Phuket"} , Thailand</div>
+                    <div className="flex  gap-2 font-semibold mt-1 text-red-700"><MapPinHouse className="text-black" />Main service location and pier located in <a href={data?.pier_location?.link || ""}>{data?.pier_location?.label || ""}</a> , Thailand</div>
+                    <div className="grid lg:grid-cols-3  py-5">
 
-                            radius="sm"
-                            color="warning"
-                            variant="light"
-                            classNames={{
-                                base: ' text-white',
-                                tab: "bg-[--primary]"
-                            }}
-                            size="lg"
-                            aria-label="Tabs variants"
-                            onSelectionChange={e => setCurrentTap(e.toString())}>
-                            <Tab key="Info" title="Info" />
-                            <Tab key="Program" title="Program" />
-                            <Tab key="Note" title="Note" />
-                        </Tabs> */}
-
-                        <NextButton onClick={e => setCurrentTap("Info")} className={` bg-[--primary] p-2 text-white ${currentTab == 'Info' && "bg-[--secondary]"}`}>Info</NextButton>
-                        <NextButton onClick={e => setCurrentTap("Program")} className={` bg-[--primary] p-2 text-white ${currentTab == 'Program' && "bg-[--secondary]"}`}>Program</NextButton>
-                        <NextButton onClick={e => setCurrentTap("Note")} className={` bg-[--primary] p-2 text-white ${currentTab == 'Note' && "bg-[--secondary]"}`}>Note</NextButton>
+                        <NextButton radius="none" onClick={e => setCurrentTap("Info")} className={` bg-[--primary] p-2 text-white ${currentTab == 'Info' && "bg-[--secondary] font-bold"}`}>Overview</NextButton>
+                        <NextButton radius="none" onClick={e => setCurrentTap("Program")} className={` bg-[--primary] p-2 text-white ${currentTab == 'Program' && "bg-[--secondary] font-bold"}`}>Program</NextButton>
+                        <NextButton radius="none" onClick={e => setCurrentTap("Note")} className={` bg-[--primary] p-2 text-white ${currentTab == 'Note' && "bg-[--secondary] font-bold"}`}>Note & Trip include</NextButton>
                     </div>
 
                     {isLoading && <div className="space-y-6">
@@ -218,9 +205,9 @@ export default function Page({ params }: { params: { id: string } }) {
             </section>
 
 
-            <section className="lg:w-[30%] flex justify-center   w-[80vw]">
+            <section className="lg:w-[30%] flex justify-center mt-1  w-[80vw]">
                 <div className="border rounded-[20px] p-4 flex flex-col gap-10 sticky top-0 bg-white shadow-lg w-full min-h-fit h-[400px]">
-                    <div className="grid gap-2">
+                    <div className="grid gap-1">
                         {/* {data && <PlanSelector data={data?.ticket_price} />
                         } */}
 
@@ -247,22 +234,9 @@ export default function Page({ params }: { params: { id: string } }) {
                             return <div key={index} className="rounded-md border-2 p-2 px-4 flex  justify-between">
                                 <div className="">
                                     <div className="text-sm mr-2 flex items-center gap-2">{item?.nickname || `Program ${index + 1}`}
-                                        {item?.nickname.toLowerCase() == "child" && <Popover
-                                            trigger="hover"
-                                            aria-labelledby="hint"
-                                            content={
-                                                <div className="p-2 shadow-md">
-
-                                                    <span id="hint" className="font-semibold text-gray-900 dark:text-white px-3">Child :</span>
-
-
-                                                    <span>0-12 years old</span>
-
-                                                </div>
-                                            }
-                                        >
-                                            <InfoIcon className="inline size-5 text-gray-700" />
-                                        </Popover>}
+                                        {item?.nickname.toLowerCase() == "child" && <Tooltip content="6-12 years old">
+                                            <InfoIcon className="inline size-4 text-red-800"></InfoIcon>
+                                        </Tooltip>}
                                     </div>
 
                                     <div className="text-xl font-bold">{formatCurrency(item?.unit_amount / 100, "")} THB</div>
@@ -324,8 +298,8 @@ export default function Page({ params }: { params: { id: string } }) {
 
                     {
                         (state.quantity.length && state.quantity.reduce((acc, cur) => acc + cur) > 0) &&
-                        <div className="grid gap-2">
-                            <div className="text-sm mb-1">People 1</div>
+                        <div className="grid gap-1">
+                            <div className="text-sm mb-1">Ticket 1</div>
                             <div className="grid grid-cols-2 gap-2">
                                 <Input value={state.name} onChange={(e) => setState(prev => ({ ...prev, name: e.target.value }))} placeholder="Name" classNames={{ input: "border-none" }}></Input>
                                 <Input value={state.lastname} onChange={(e) => setState(prev => ({ ...prev, lastname: e.target.value }))} placeholder="Last name" classNames={{ input: "border-none" }}></Input>
@@ -338,8 +312,8 @@ export default function Page({ params }: { params: { id: string } }) {
                     {
                         state.quantity.length && Array.from({ length: state.quantity.reduce((acc, cur) => acc + cur) - 1 }).map((item, index) =>
                             <div className="" key={index}>
-                                <div className="text-sm  mb-1">People {index + 2}</div>
-                                <div className="grid grid-cols-2 gap-2">
+                                <div className="text-sm  mb-1">Ticket {index + 2}</div>
+                                <div className="grid  gap-2">
 
                                     <Input value={state.names[index]} onChange={(e) => setState((prev) => {
                                         const names = [...(prev.names || [])];
@@ -361,32 +335,34 @@ export default function Page({ params }: { params: { id: string } }) {
 
 
                                 const products = state.quantity.map((item, index) => {
-                                  
+
                                     return ({
-                                    
-                                    id: plans[index].id,
-                                    page_id:params.id,
-                                    quantity: item,
-                                    type: 'island',
-                                    status: "waiting",
-                                    datetime: bookingDate,
-                                    pick_up_place: state?.pick_up_place,
-                                    name: state?.name,
-                                    lastname: state?.lastname,
-                                    email: state?.email,
-                                    phone: state?.phone,
-                                    other: state?.other,
-                                    names: state?.names,
-                                    created_at: new Date().toISOString(),
-                                    image_url: data?.image_url?.[lang]?.[0]
-                                })});
+
+                                        id: plans[index].id,
+                                        page_id: params.id,
+                                        quantity: item,
+                                        type: 'island',
+                                        status: "waiting",
+                                        datetime: bookingDate,
+                                        pick_up_place: state?.pick_up_place,
+                                        name: state?.name,
+                                        lastname: state?.lastname,
+                                        email: state?.email,
+                                        phone: state?.phone,
+                                        other: state?.other,
+                                        names: state?.names,
+                                        created_at: new Date().toISOString(),
+                                        image_url: data?.image_url?.[lang]?.[0]
+                                    })
+                                });
 
 
 
 
                                 products.map((product) => {
-                                    if(product.quantity <= 0) return;
-                                    return cart.addOneToCart(product)});
+                                    if (product.quantity <= 0) return;
+                                    return cart.addOneToCart(product)
+                                });
                                 // store.setCart((prev) => {
                                 //     const newItems =
                                 //         state.quantity.map((item, index) => ({
@@ -432,7 +408,7 @@ export default function Page({ params }: { params: { id: string } }) {
                                 await setDoc(doc(db, "Bookings", v4()), {
                                     uid: user.uid,
                                     created_at: new Date().toISOString(),
-                                    page_id:params.id,
+                                    page_id: params.id,
                                     ref_id: product?.id,
                                     type: product?.type,
                                     quantity: product?.quantity,
@@ -490,80 +466,109 @@ export default function Page({ params }: { params: { id: string } }) {
 
 function Info({ data }) {
     return <>
-        <div className="py-3">
-            {/* <div className="text-[--primary] font-bold text-2xl py-2"></div> */}
-            <div className="text-zinc-800 flex gap-2 px-1">
-                {data && data?.activities?.split(",").map((item: any, index: number) =>
-                    <div className="p-2 px-4 rounded-[12px] border w-fit h-fit shadow-md">
 
-                        {item}
-                    </div>)}
-            </div>
-        </div>
-        <div className='py-3'>
-            <span className=" font-bold ">Overview : </span>
-            <span className="text-zinc-800">
-                {data?.place_des || "description"}
-            </span>
-        </div>
-        <div className="py-3 flex items-center gap-2">
-            <MapPinned className="inline size-6 text-[--primary-2]" />
-            <div className="">
-                <span className=" font-bold ">Visit Point : </span>
+        <Collapse className="lg:h-auto h-[100px]">
+            <div className='py-3 px-5 rounded-[30px] bg-gray-100'>
+
                 <span className="text-zinc-800">
-                    {data?.visit_point || "Visit Point info"}
+                    {data?.place_des || "description"}
                 </span>
             </div>
-        </div>
+        </Collapse>
 
-        <div className="py-3 flex items-center gap-2">
-            <Utensils className="inline size-6 text-[--primary-2]" />
-            <div className="">
-                <span className=" font-bold ">Meal : </span>
-                <span className="text-zinc-800">
-                    {data?.meal || "No meals"}
-                </span>
-            </div>
-        </div>
-
-
-
-        <div className="py-3  ">
-            <MapPinPlus className="inline size-6 text-[--primary-2] mr-2" />
-            <span className="text-[--primary-3]">
-                <span className="font-bold">Pier located at: : </span>
-                <span className="">
-                    {data?.province || ""}
-                </span>
-            </span>
-        </div>
-
-        <div className="py-3  ">
-            <CarFront className="inline size-6 text-[--primary-2] mr-2" />
-            <span className="text-[--primary-3]">
-                <span className="font-bold">Transfer service : </span>
-                <span className="">
-                    {data?.trans_service ? "Yes, The tour provider will pickup and delivery to your accommodation once trip is complete" : "No total Hours"}
-                </span>
-            </span>
-        </div>
-
-        <div className="py-3 flex items-center gap-2">
-            <Clock className="inline size-6 text-[--primary-2]" />
-            <div className="">
-                <span className=" font-bold">Trip start-end : </span>
-                <span className="text-zinc-800">
-                    {data?.total_hours || "No total Hours"}
-                </span>
-            </div>
-        </div>
-        <div className="py-3 flex items-center gap-2">
+        <div className="py-3 flex items-center gap-2 px-5 rounded-[30px] bg-gray-100">
             <Slack className="inline size-6 text-[--primary-2]" />
             <div className="">
-                <span className=" font-bold">Activity : </span>
+                <span className=" font-bold">Key Activity : </span>
                 <span className="text-zinc-800">
-                    {/* {data?.total_hours || "No total Hours"} */}
+                    {data?.activities || "No Activities"}
                 </span>
+            </div>
+        </div>
+
+        <div className="px-5 rounded-[30px] bg-gray-100 mt-3">
+            <div className="py-3 flex items-center gap-2 ">
+                <MapPinPlus className="inline size-6 text-[--primary-2]" />
+                <div className="">
+                    <span className=" font-bold ">Visit Point : </span>
+                    <span className="text-zinc-800">
+                        {data?.visit_point || "Visit Point info"}
+                    </span>
+                </div>
+            </div>
+            <div className="py-3 flex items-center gap-2">
+                <Utensils className="inline size-6 text-[--primary-2]" />
+                <div className="">
+                    <span className=" font-bold ">Meal : </span>
+                    <span className="text-zinc-800">
+                        {data?.meal || "No meals"}
+                    </span>
+                </div>
+            </div>
+            <div className="py-3  ">
+                <MapPinPlus className="inline size-6 text-[--primary-2] mr-2" />
+                <span className="text-[--primary-3]">
+                    <span className="font-bold">Pier located at: : </span>
+                    <a href={data?.pier_location?.link || ""}>
+                        <span className="">
+                            {data?.pier_location?.label || ""}
+                        </span>
+                    </a>
+
+                </span>
+            </div>
+            <div className="py-3  ">
+                <CarFront className="inline size-6 text-[--primary-2] mr-2" />
+                <span className="text-[--primary-3]">
+                    <span className="font-bold">Transfer service : </span>
+                    <span className="">
+                        {data?.trans_service ? "Yes, The tour provider will pickup and delivery to your accommodation once trip is complete" : "No total Hours"}
+                    </span>
+                </span>
+            </div>
+            <div className="py-3 flex items-center gap-2">
+                <Clock className="inline size-6 text-[--primary-2]" />
+                <div className="">
+                    <span className=" font-bold">Trip start-end : </span>
+                    <span className="text-zinc-800">
+                        {data?.total_hours || "No total Hours"}
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <div className="grid grid-cols-2 gap-2 py-5">
+            <div className="p-2 text-center py-4 bg-gray-100">
+                Group tour by spead boat
+            </div>
+            <div className="p-2 text-center py-4 bg-gray-100">
+                {data?.lang_guide} language guide
+            </div>
+        </div>
+
+
+        <div className="py-3 grid grid-cols-2 gap-2 px-5 rounded-[20px] bg-gray-100">
+            <div className="p-2 bg-gray-100">
+               <Modal text={{
+                header:"Terms & condition ",
+                button:"Terms & condition",
+
+               }}
+                 className="w-full bg-gray-400"
+               >
+                <div className="">{data?.terms}</div>
+               </Modal>
+            </div>
+            <div className="p-2 bg-gray-100">
+                <Modal text={{
+                header:"Trip policy",
+                button:"Trip policy",
+                
+               }}
+               className="w-full bg-gray-400"
+               >
+                <div className="">{data?.trip_policy}</div>
+               </Modal>
             </div>
         </div>
         {/* <div className="py-3 pb-10">
