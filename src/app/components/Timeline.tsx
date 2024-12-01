@@ -10,7 +10,7 @@ export default function TimelineTrip({program}: any) {
         <Timeline.Point icon={HiCalendar} />
         <Timeline.Content>
           <Timeline.Time>{item?.time ||"February 2022"}</Timeline.Time>
-          <Timeline.Title>Activity</Timeline.Title>
+          {/* <Timeline.Title>Activity</Timeline.Title> */}
           <Timeline.Body>
            {item?.activity ||"Program description"}
           </Timeline.Body>

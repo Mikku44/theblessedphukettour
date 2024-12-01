@@ -39,10 +39,11 @@ export default function Home() {
   return (
     <>
 
-      <section className="flex flex-col md:flex-row gap-5 justify-center h-auto md:h-[500px] overflow-hidden mt-5">
+      <section className="flex flex-col md:flex-row gap-5 justify-center h-auto md:h-[500px] overflow-hidden">
         <div className="w-full relative bg-slate-100 aspect-video md:aspect-auto">
           {/* Carousel */}
           <Carousel
+            control={false}
             items={[
               "/images/banner/banner1.png",
               "/images/banner/banner2.png",
@@ -60,7 +61,7 @@ export default function Home() {
           />
 
           {/* Overlay and Text */}
-          <div className="absolute inset-0 z-10 flex items-center text-white bg-gradient-to-t from-zinc-900/80 to-slate-50/10 rounded-xl">
+          <div className="absolute inset-0 z-10 flex items-center text-white bg-gradient-to-t from-zinc-900/80 to-slate-50/10 ">
             <div className="px-5 sm:px-10">
               <p className="text-sm sm:text-base md:text-lg text-[--primary]">{t('Jalanista Trip Manager')}</p>
               <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold">{t('Hello')},</h1>
