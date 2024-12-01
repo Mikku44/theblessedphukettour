@@ -3,6 +3,7 @@ import {
   Autocomplete,
   AutocompleteItem
 } from "@nextui-org/autocomplete";
+import { Input } from "@nextui-org/input";
 import { useState } from "react";
 
 
@@ -37,14 +38,16 @@ export default function PlaceSelector({ onChange }: any) {
 
   return (
     <div className="relative">
-      <input
+      <Input
+
         type="text"
         value={value}
         onChange={(e) => {
           setValue(e.target.value)
           searchPlaces(e.target.value)}}
         placeholder="Search for places..."
-        className="p-2 border border-gray-300 rounded-xl w-full "
+        classNames={{ input: "border-none" }}
+        className="p-2 border-none border-gray-300 rounded-xl w-full "
       />
 
       {places.length > 0 &&(
