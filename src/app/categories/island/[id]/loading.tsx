@@ -1,7 +1,11 @@
-export default function Loading(){
+import { Spinner } from "flowbite-react";
+
+export default function Loading() {
     return <>
-    <div className="flex justify-center items-center w-full min-h-screen ">
-        <div className="animate-spin">_</div>
-    </div>
+        <div className="flex justify-center items-center w-full min-h-screen ">
+
+            <Spinner aria-label="Alternate spinner button example" size="xl" />
+
+        </div>
     </>
 }

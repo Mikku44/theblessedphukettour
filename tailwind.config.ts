@@ -9,7 +9,7 @@ const config: Config = {
     "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
     "./node_modules/flowbite/**/*.js",
     flowbite.content(),
-    "./node_modules/@nextui-org/theme/dist/components/(autocomplete|button|calendar|checkbox|date-picker|dropdown|input|navbar|popover|radio|tabs|ripple|spinner|listbox|divider|scroll-shadow|date-input|menu).js"
+    "./node_modules/@nextui-org/theme/dist/components/(autocomplete|button|calendar|checkbox|date-picker|dropdown|input|modal|navbar|popover|radio|table|tabs|ripple|spinner|listbox|divider|scroll-shadow|date-input|menu|spacer).js"
   ],
   theme: {
     extend: {

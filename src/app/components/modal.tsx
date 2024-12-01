@@ -1,27 +1,33 @@
+'use client'
+import { Button } from "@nextui-org/button";
+import {Modal as NextModal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure} from "@nextui-org/modal";
 
-"use client";
-
-import { Button, Modal as FlowModal } from "flowbite-react";
-import { useState } from "react";
-
-export function Modal({text:{button,header,accept,close},children,className}:any) {
-  const [openModal, setOpenModal] = useState(true);
+export default function Modal({text:{button,header,accept,close},children,className}:any) {
+  const {isOpen, onOpen, onOpenChange} = useDisclosure();
 
   return (
     <>
-      <Button className={className} onClick={() => setOpenModal(true)}>{button}</Button>
-      <FlowModal dismissible show={openModal} onClose={() => setOpenModal(false)}>
-        <FlowModal.Header>{header || "Modal"}</FlowModal.Header>
-        <FlowModal.Body>
-          {children}
-        </FlowModal.Body>
-        <FlowModal.Footer>
-          <Button onClick={() => setOpenModal(false)}>{accept || "Accept"}</Button>
-          <Button color="gray" onClick={() => setOpenModal(false)}>
-            {close || "Close"}
-          </Button>
-        </FlowModal.Footer>
-      </FlowModal>
+      <Button onPress={onOpen} className={className}>{button}</Button>
+      <NextModal isOpen={isOpen} onOpenChange={onOpenChange}>
+        <ModalContent>
+          {(onClose) => (
+            <>
+              <ModalHeader className="flex flex-col gap-1">{header}</ModalHeader>
+              <ModalBody>
+                {children}
+              </ModalBody>
+              <ModalFooter>
+                <Button color="danger" variant="light" onPress={onClose}>
+                  {close||"Close"}
+                </Button>
+                <Button color="primary" className="bg-[--primary]" onPress={onClose}>
+                  {accept ||"Accept"}
+                </Button>
+              </ModalFooter>
+            </>
+          )}
+        </ModalContent>
+      </NextModal>
     </>
   );
 }

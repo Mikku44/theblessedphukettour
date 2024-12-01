@@ -1,5 +1,5 @@
 'use client'
-import { ChevronDown, Compass, MapPin, MapPinned, Ship, Star } from "lucide-react";
+import { ChevronDown, Compass, Map, MapPin, MapPinHouse, MapPinned, Ship, Star } from "lucide-react";
 import DraggableScroll from "../../components/DraggableScroll";
 import { useTranslations } from "next-intl";
 import { Tabs, Tab } from "@nextui-org/tabs";
@@ -31,7 +31,7 @@ export default function Page() {
                         <img src={item} alt="" className=" rounded-none " />
                     </div>
                 )
-            } className="w-full h-[400px] aspect-auto" />
+            } className="w-full lg:h-[400px] md:h-[250px] h-[200px] aspect-auto" />
         </div>
         <div className="grid lg:grid-cols-4 w-full bg-[--primary]">
             <Button radius='none' className={` bg-[--primary] p-4 h-[54px] text-small font-bold ${currentTap == 'island' && "bg-[--secondary] text-white"}`}
@@ -127,9 +127,9 @@ function Islands() {
                 return <Link
                     key={index}
                     href={`/categories/island/${item?.id}`}
-                    className="block rounded-xl overflow-hidden border-2 border-gray-200 bg-white shadow-sm transition-all hover:shadow-md"
+                    className="block rounded-xl overflow-hidden border-2 border-gray-200 bg-white shadow-sm transition-all hover:shadow-md "
                 >
-                    <div className="relative h-[300px] w-full overflow-hidden">
+                    <div className="relative lg:h-[300px] h-[100px] w-full overflow-hidden">
                         <img
                             className="h-full w-full object-cover transition-transform duration-300 hover:scale-105"
                             src={item?.image_url?.[`${lang}`]?.[0] || "https://images.unsplash.com/photo-1483683804023-6ccdb62f86ef?q=80&w=1935&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"}
@@ -139,7 +139,7 @@ function Islands() {
 
                     <div className="p-4">
                         <h2 className="font-bold text-xl mb-2 text-gray-800">{item?.place_name || "Island Name"}</h2>
-                        <p className="text-gray-600 text-sm line-clamp-3 mb-3">
+                        <p className="text-gray-600 text-sm line-clamp-2 mb-3">
                             {item?.description || "Experience the beauty of this tropical paradise with crystal clear waters, white sandy beaches, and lush vegetation. Perfect for a relaxing getaway or an adventure-filled vacation."}
                         </p>
 
@@ -150,15 +150,10 @@ function Islands() {
                             <span className="text-gray-600">100+ reserved</span>
                         </div>
 
-                        <div className="flex flex-wrap gap-2 mb-3">
-                            <div className="inline-flex items-center text-sm px-2 py-1 rounded-full bg-green-100 text-green-700">
-                                <MapPinned className="w-4 h-4 mr-1" />
-                                <span>{item?.province || "Phuket"}, Thailand</span>
-                            </div>
-                            <div className="inline-flex items-center text-sm px-2 py-1 rounded-full bg-red-100 text-red-700">
-                                <MapPin className="w-4 h-4 mr-1" />
-                                <span>{item?.province || "Phuket"}, Thailand</span>
-                            </div>
+                        <div className="grid gap-1 ">
+                           
+                            <div className="  gap-2 font-semibold  text-red-700"><Map className="text-black inline mx-2" />Island location  in  {item?.province || "Phuket"} , Thailand</div>
+                            <div className="  gap-2 font-semibold mt-1 text-red-700"><MapPinHouse className="text-black inline mx-2" />Main service location and pier located in <a href={item?.pier_location?.link || ""}>{item?.pier_location?.label || ""}</a> , Thailand</div>
                         </div>
 
                         <div className="flex justify-between items-end">

@@ -11,7 +11,7 @@ export default function Carousel({ className, items,control = true}: any) {
   ]
   items = items || dummy
   return (
-    <div className={`h-[400px] ${className}`}>
+    <div className={` ${className} lg:h-[400px]`}>
       <Flowbite
         theme={{
           theme: {

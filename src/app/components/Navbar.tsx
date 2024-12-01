@@ -4,7 +4,7 @@ import { Button } from "@nextui-org/button";
 import { Dropdown, DropdownItem, DropdownMenu, DropdownSection, DropdownTrigger } from "@nextui-org/dropdown";
 import { Input } from "@nextui-org/input";
 import { Navbar, NavbarBrand, NavbarContent, NavbarItem, NavbarMenu, NavbarMenuItem, NavbarMenuToggle } from "@nextui-org/navbar";
-import { Avatar, Badge, Card } from "flowbite-react";
+import { Avatar, Badge, Card, Drawer, Sidebar, TextInput } from "flowbite-react";
 import { Calendar, CheckCircle, ChevronDown, Clock, Globe, Hash, MapPin, Menu, Minus, Package, Plus, ShoppingBag, ShoppingCart, Ticket, Tickets, Variable, X, XCircle } from "lucide-react";
 
 import Link from "next/link";
@@ -27,7 +27,9 @@ export default function Navigation() {
     const [showCart, setShowCart] = useState(false);
     const [user, setUser] = useState<any>();
 
+    const [isOpen, setIsOpen] = useState(false);
 
+    const handleClose = () => setIsOpen(false);
 
     const menuItems = [
         "Home",
@@ -84,7 +86,7 @@ export default function Navigation() {
     ];
 
     return <header className="sticky top-0 w-full z-[99] bg-black ">
-        <nav className=" lg:w-[1215px] md:w-full w-full mx-auto lg:px-0 md:px-5 px-3">
+        <nav className=" mx-auto w-full  lg:max-w-[1215px] px-4 sm:px-6 lg:px-8">
 
 
             <div className="w-full flex items-center justify-between p-1">
@@ -95,7 +97,7 @@ export default function Navigation() {
                         aria-label={isMenuOpen ? "Close menu" : "Open menu"}
                         variant="light"
                     >
-                        <Menu className="text-white"></Menu>
+                        <Menu className="text-white" onClick={() => setIsOpen(prev => !prev)}></Menu>
                     </Button>
                     <Link href="/">
                         <img src="/icons/logofill.png" alt="Jalanista Logo" className="h-[35px]" />
@@ -127,7 +129,7 @@ export default function Navigation() {
                                 </Button>
                             </DropdownTrigger>
                             <DropdownMenu
-                                className="w-[340px]"
+                                // className="w-[80vw] "
                                 itemClasses={{
                                     base: "gap-4",
                                 }}
@@ -141,6 +143,20 @@ export default function Navigation() {
                                         {category?.name}
                                     </DropdownItem>
                                 ))}
+{/* 
+                                <DropdownItem className="w-[80vw]" classNames={{base:"w-[80vw] ",wrapper:"hover:bg-white"}}>
+                                    <ul className="mx-auto mt-6 grid max-w-screen-xl border-gray-200 px-2 py-5 shadow-sm sm:grid-cols-2 md:grid-cols-3 ">
+                                       {categories.map((category, index) => <li key={index}>
+                                            <a   href={`/categories/${category?.name.toLowerCase()}`} className="block rounded-lg p-3 hover:bg-gray-50 dark:hover:bg-gray-700">
+                                                <div className="font-semibold"> {category?.name}</div>
+                                                <span className="text-sm text-gray-500 dark:text-gray-400">
+                                                {category?.description}
+                                                </span>
+                                            </a>
+                                        </li>)}
+                                        
+                                    </ul>
+                                </DropdownItem> */}
                             </DropdownMenu>
                         </Dropdown>
                     </div>
@@ -254,6 +270,7 @@ export default function Navigation() {
                                         )}
                                     </div>
 
+
                                     <Button
                                         onClick={async () => {
                                             const products = cart.items;
@@ -337,6 +354,57 @@ export default function Navigation() {
                 </div>
             </div>
         </nav>
+
+
+
+        <Drawer backdrop={false} open={isOpen} onClose={handleClose}>
+        <Drawer.Header title="MENU" titleIcon={() => <></>} />
+        <Drawer.Items>
+          <Sidebar
+            aria-label="Sidebar with multi-level dropdown example"
+            className="[&>div]:bg-transparent [&>div]:p-0"
+          >
+            <div className="flex h-full flex-col justify-between py-2">
+              <div>
+                <form className="pb-3 md:hidden">
+                  <TextInput type="search" placeholder="Search" required size={32} />
+                </form>
+                <Sidebar.Items>
+                  <Sidebar.ItemGroup>
+                    <Sidebar.Item href="/" >
+                      Dashboard
+                    </Sidebar.Item>
+                    <Sidebar.Item href="/e-commerce/products" >
+                      Products
+                    </Sidebar.Item>
+                    <Sidebar.Item href="/users/list" >
+                      Users list
+                    </Sidebar.Item>
+                    <Sidebar.Item href="/authentication/sign-in" >
+                      Sign in
+                    </Sidebar.Item>
+                    <Sidebar.Item href="/authentication/sign-up">
+                      Sign up
+                    </Sidebar.Item>
+                  </Sidebar.ItemGroup>
+                  <Sidebar.ItemGroup>
+                    <Sidebar.Item href="https://github.com/themesberg/flowbite-react/" >
+                      Docs
+                    </Sidebar.Item>
+                    <Sidebar.Item href="https://flowbite-react.com/">
+                      Components
+                    </Sidebar.Item>
+                    <Sidebar.Item href="https://github.com/themesberg/flowbite-react/issues" >
+                      Help
+                    </Sidebar.Item>
+                  </Sidebar.ItemGroup>
+                </Sidebar.Items>
+              </div>
+            </div>
+          </Sidebar>
+        </Drawer.Items>
+      </Drawer>
+
     </header>
 
     return (

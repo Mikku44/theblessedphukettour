@@ -73,7 +73,7 @@ export default async function RootLayout({
         <CartProvider >
           <NextIntlClientProvider messages={messages}>
             <Navigation />
-            <main className=" mx-auto lg:w-[1215px] md:w-full w-full overflow-hidden ">{children}</main>
+            <main className="mx-auto w-full overflow-hidden lg:max-w-[1215px]  lg:px-8">{children}</main>
             <FloatingChat />
             <Footer />
           </NextIntlClientProvider>

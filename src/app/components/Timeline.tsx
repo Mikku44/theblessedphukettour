@@ -4,7 +4,7 @@ import { HiArrowNarrowRight, HiCalendar } from "react-icons/hi";
 
 export default function TimelineTrip({program}: any) {
   return <div className="px-5">
-   
+    <div className="lg:text-[28px] text-medium font-bold my-5">Itinerary</div>
     {program.length && <Timeline className="">
       {program?.map((item,index)=><Timeline.Item key={index}>
         <Timeline.Point icon={HiCalendar} />
